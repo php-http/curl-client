@@ -78,7 +78,7 @@ class CurlHttpClient implements HttpClient
      *
      * @return array
      *
-     * @since 3.02
+     * @since 1.00
      */
     public function getDefaultOptions()
     {
@@ -162,7 +162,7 @@ class CurlHttpClient implements HttpClient
      *
      * @throws RuntimeException on cURL error
      *
-     * @since 3.00
+     * @since 1.00
      */
     protected function request($options, &$raw, &$info)
     {
@@ -191,7 +191,7 @@ class CurlHttpClient implements HttpClient
      *
      * @return ResponseInterface
      *
-     * @since 3.02
+     * @since 1.00
      */
     protected function addHeaderToResponse($response, $name, $value)
     {
