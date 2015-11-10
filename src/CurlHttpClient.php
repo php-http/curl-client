@@ -34,6 +34,12 @@ class CurlHttpClient implements HttpClient
     use StreamFactoryAwareTemplate;
 
     /**
+     * cURL handle opened resource
+     * @var resource
+     */
+    private $handle;
+
+    /**
      * cURL handle configuration TODO change description
      *
      * @var array
@@ -71,6 +77,16 @@ class CurlHttpClient implements HttpClient
                 $this->getDefaultOptions()
             )
         );
+    }
+
+    /**
+     * Release resources if still active
+     */
+    public function __destruct()
+    {
+        if (is_resource($this->handle)) {
+            curl_close($this->handle);
+        }
     }
 
     /**
@@ -166,19 +182,27 @@ class CurlHttpClient implements HttpClient
      */
     protected function request($options, &$raw, &$info)
     {
-        $ch = curl_init();
-        try {
-            curl_setopt_array($ch, $options);
-            $raw = curl_exec($ch);
+        if (is_resource($this->handle)) {
+            curl_reset($this->handle);
+        } else {
+            $this->handle = curl_init();
+        }
 
-            if (curl_errno($ch) > 0) {
+        try {
+            curl_setopt_array($this->handle, $options);
+            $raw = curl_exec($this->handle);
+
+            if (curl_errno($this->handle) > 0) {
                 throw new RuntimeException(
-                    sprintf('Curl error: (%d) %s', curl_errno($ch), curl_error($ch))
+                    sprintf(
+                        'Curl error: (%d) %s',
+                        curl_errno($this->handle),
+                        curl_error($this->handle)
+                    )
                 );
             }
-            $info = curl_getinfo($ch);
+            $info = curl_getinfo($this->handle);
         } finally {
-            curl_close($ch);
         }
     }
 
