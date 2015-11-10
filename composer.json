@@ -1,0 +1,48 @@
+{
+    "name": "php-http/curl-client",
+    "description": "cURL client for PHP-HTTP",
+    "license": "MIT",
+    "keywords": ["http", "curl"],
+    "homepage": "http://php-http.org",
+    "authors": [
+        {
+            "name": "Михаил Красильников",
+            "email": "m.krasilnikov@yandex.ru"
+        }
+    ],
+    "require": {
+        "php": ">=5.5",
+        "ext-curl": "*",
+        "php-http/httplug": "^1.0",
+        "php-http/message-factory": "^0.2"
+    },
+    "require-dev": {
+        "guzzlehttp/psr7": "^1.0",
+        "php-http/adapter-integration-tests": "^0.2",
+        "zendframework/zend-diactoros": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Http\\Curl\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Http\\Curl\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.1-dev"
+        }
+    },
+    "provide": {
+        "php-http/client-implementation": "1.0"
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-ci": "vendor/bin/phpunit --coverage-clover build/coverage.xml"
+    },
+    "prefer-stable": true,
+    "minimum-stability": "dev"
+}
