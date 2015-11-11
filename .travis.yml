@@ -12,10 +12,6 @@ php:
   - 7.0
   - hhvm
 
-env:
-  global:
-    - TEST_COMMAND="phpunit"
-
 matrix:
   fast_finish: true
   include:
