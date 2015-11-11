@@ -113,19 +113,14 @@ class CurlHttpClient implements HttpClient
 
         $headerSize = $info['header_size'];
         $rawHeaders = substr($raw, 0, $headerSize);
+        $headers = $this->parseRawHeaders($rawHeaders);
 
-        // Parse headers
-        $allHeaders = explode("\r\n\r\n", $rawHeaders);
-        $lastHeaders = trim(array_pop($allHeaders));
-        while (count($allHeaders) > 0 && '' === $lastHeaders) {
-            $lastHeaders = trim(array_pop($allHeaders));
-        }
-        $headerLines = explode("\r\n", $lastHeaders);
-        foreach ($headerLines as $header) {
+        foreach ($headers as $header) {
             $header = trim($header);
             if ('' === $header) {
                 continue;
             }
+
             // Status line
             if (substr(strtolower($header), 0, 5) === 'http/') {
                 $parts = explode(' ', $header, 3);
@@ -134,6 +129,7 @@ class CurlHttpClient implements HttpClient
                     ->withProtocolVersion(substr($parts[0], 5));
                 continue;
             }
+
             // Extract header
             $parts = explode(':', $header, 2);
             $headerName = trim(urldecode($parts[0]));
@@ -289,5 +285,23 @@ class CurlHttpClient implements HttpClient
             }
         }
         return $curlHeaders;
+    }
+
+    /**
+     * Parse raw headers from HTTP response
+     *
+     * @param string $rawHeaders
+     *
+     * @return string[]
+     */
+    private function parseRawHeaders($rawHeaders)
+    {
+        $allHeaders = explode("\r\n\r\n", $rawHeaders);
+        $lastHeaders = trim(array_pop($allHeaders));
+        while (count($allHeaders) > 0 && '' === $lastHeaders) {
+            $lastHeaders = trim(array_pop($allHeaders));
+        }
+        $headers = explode("\r\n", $lastHeaders);
+        return $headers;
     }
 }
