@@ -35,27 +35,27 @@ class CurlHttpClient implements HttpClient
 
     /**
      * cURL handle opened resource
-     * @var resource
+     *
+     * @var resource|null
      */
-    private $handle;
+    private $handle = null;
 
     /**
-     * cURL handle configuration TODO change description
+     * Client settings
      *
      * @var array
-     *
-     * @since 1.00
      */
-    protected $options;
+    private $settings;
 
     /**
-     * Constructor
+     * Create new client
      *
-     * Available options (see also {@link getDefaultOptions}):
+     * Available options:
      *
-     * - connection_timeout : int —  connection timeout in seconds
-     * - ssl_verify_peer : bool — verify peer when using SSL
-     * - timeout : int —  overall timeout in seconds
+     * - connection_timeout : int —  connection timeout in seconds;
+     * - curl_options: array — custom cURL options;
+     * - ssl_verify_peer : bool — verify peer when using SSL;
+     * - timeout : int —  overall timeout in seconds.
      *
      * @param MessageFactory $messageFactory HTTP Message factory
      * @param StreamFactory  $streamFactory  HTTP Stream factory
@@ -70,12 +70,14 @@ class CurlHttpClient implements HttpClient
     ) {
         $this->setMessageFactory($messageFactory);
         $this->setStreamFactory($streamFactory);
-        $this->options = array_merge(
-            $this->getDefaultOptions(),
-            array_intersect_key(
-                $options,
-                $this->getDefaultOptions()
-            )
+        $this->settings = array_merge(
+            [
+                'curl_options' => [],
+                'connection_timeout' => 3,
+                'ssl_verify_peer' => true,
+                'timeout' => 10
+            ],
+            $options
         );
     }
 
@@ -87,23 +89,6 @@ class CurlHttpClient implements HttpClient
         if (is_resource($this->handle)) {
             curl_close($this->handle);
         }
-    }
-
-    /**
-     * Return available options and there default values
-     *
-     * @return array
-     *
-     * @since 1.00
-     */
-    public function getDefaultOptions()
-    {
-        return [
-            'curl_options' => [],
-            'connection_timeout' => 3,
-            'ssl_verify_peer' => true,
-            'timeout' => 10
-        ];
     }
 
     /**
@@ -158,12 +143,19 @@ class CurlHttpClient implements HttpClient
             $parts = explode(':', $header, 2);
             $headerName = trim(urldecode($parts[0]));
             $headerValue = trim(urldecode($parts[1]));
-            $response = $this->addHeaderToResponse($response, $headerName, $headerValue);
+            if ($response->hasHeader($headerName)) {
+                $response = $response->withAddedHeader($headerName, $headerValue);
+            } else {
+                $response = $response->withHeader($headerName, $headerValue);
+            }
         }
 
+        /*
+         * substr can return boolean value for empty string. But createStream does not support
+         * booleans. Converting to string.
+         */
         $content = (string) substr($raw, $headerSize);
         $stream = $this->getStreamFactory()->createStream($content);
-        /** @var ResponseInterface $response */
         $response = $response->withBody($stream);
 
         return $response;
@@ -188,43 +180,19 @@ class CurlHttpClient implements HttpClient
             $this->handle = curl_init();
         }
 
-        try {
-            curl_setopt_array($this->handle, $options);
-            $raw = curl_exec($this->handle);
+        curl_setopt_array($this->handle, $options);
+        $raw = curl_exec($this->handle);
 
-            if (curl_errno($this->handle) > 0) {
-                throw new RuntimeException(
-                    sprintf(
-                        'Curl error: (%d) %s',
-                        curl_errno($this->handle),
-                        curl_error($this->handle)
-                    )
-                );
-            }
-            $info = curl_getinfo($this->handle);
-        } finally {
+        if (curl_errno($this->handle) > 0) {
+            throw new RuntimeException(
+                sprintf(
+                    'Curl error: (%d) %s',
+                    curl_errno($this->handle),
+                    curl_error($this->handle)
+                )
+            );
         }
-    }
-
-    /**
-     * Adds a header to the response object
-     *
-     * @param ResponseInterface $response
-     * @param string            $name
-     * @param string            $value
-     *
-     * @return ResponseInterface
-     *
-     * @since 1.00
-     */
-    protected function addHeaderToResponse($response, $name, $value)
-    {
-        if ($response->hasHeader($name)) {
-            $response = $response->withAddedHeader($name, $value);
-        } else {
-            $response = $response->withHeader($name, $value);
-        }
-        return $response;
+        $info = curl_getinfo($this->handle);
     }
 
     /**
@@ -238,9 +206,7 @@ class CurlHttpClient implements HttpClient
      */
     private function createCurlOptions(RequestInterface $request)
     {
-        $options = array_key_exists('curl_options', $this->options)
-            ? $this->options['curl_options']
-            : [];
+        $options = $this->settings['curl_options'];
 
         $options[CURLOPT_HEADER] = true;
         $options[CURLOPT_RETURNTRANSFER] = true;
@@ -248,46 +214,27 @@ class CurlHttpClient implements HttpClient
         $options[CURLOPT_HTTP_VERSION] = $this->getProtocolVersion($request->getProtocolVersion());
         $options[CURLOPT_URL] = (string) $request->getUri();
 
-        $options[CURLOPT_CONNECTTIMEOUT] = $this->options['connection_timeout'];
+        $options[CURLOPT_CONNECTTIMEOUT] = $this->settings['connection_timeout'];
         $options[CURLOPT_FOLLOWLOCATION] = false;
-        $options[CURLOPT_SSL_VERIFYPEER] = $this->options['ssl_verify_peer'];
-        $options[CURLOPT_TIMEOUT] = $this->options['timeout'];
+        $options[CURLOPT_SSL_VERIFYPEER] = $this->settings['ssl_verify_peer'];
+        $options[CURLOPT_TIMEOUT] = $this->settings['timeout'];
 
-        switch ($request->getMethod()) {
-            case 'HEAD':
-                $options[CURLOPT_NOBODY] = true;
-                break;
-            case 'OPTIONS':
-            case 'POST':
-            case 'PUT':
-                $options[CURLOPT_CUSTOMREQUEST] = $request->getMethod();
-                $body = (string) $request->getBody();
-                if ('' !== $body) {
-                    $options[CURLOPT_POSTFIELDS] = $body;
-                }
-                break;
-            case 'CONNECT':
-            case 'DELETE':
-            case 'PATCH':
-            case 'TRACE':
-                $options[CURLOPT_CUSTOMREQUEST] = $request->getMethod();
-                break;
-        }
-
-        $headers = array_keys($request->getHeaders());
-        foreach ($headers as $name) {
-            if (strtolower($name) === 'content-length') {
-                $values = [0];
-                if (array_key_exists(CURLOPT_POSTFIELDS, $options)) {
-                    $values = [strlen($options[CURLOPT_POSTFIELDS])];
-                }
-            } else {
-                $values = $request->getHeader($name);
-            }
-            foreach ($values as $value) {
-                $options[CURLOPT_HTTPHEADER][] = $name . ': ' . $value;
+        if (in_array($request->getMethod(), ['OPTIONS', 'POST', 'PUT'], true)) {
+            /* cURL allows request body only for these methods. */
+            $body = (string) $request->getBody();
+            if ('' !== $body) {
+                $options[CURLOPT_POSTFIELDS] = $body;
             }
         }
+
+        if ($request->getMethod() === 'HEAD') {
+            $options[CURLOPT_NOBODY] = true;
+        } elseif ($request->getMethod() !== 'GET') {
+            /* GET is a default method. Other methods should be specified explicitly. */
+            $options[CURLOPT_CUSTOMREQUEST] = $request->getMethod();
+        }
+
+        $options[CURLOPT_HTTPHEADER] = $this->createHeaders($request, $options);
 
         if ($request->getUri()->getUserInfo()) {
             $options[CURLOPT_USERPWD] = $request->getUri()->getUserInfo();
@@ -319,5 +266,33 @@ class CurlHttpClient implements HttpClient
                 throw new UnexpectedValueException('libcurl 7.33 needed for HTTP 2.0 support');
         }
         return CURL_HTTP_VERSION_NONE;
+    }
+
+    /**
+     * Create headers array for CURLOPT_HTTPHEADER
+     *
+     * @param RequestInterface $request
+     * @param array            $options cURL options
+     *
+     * @return string[]
+     */
+    private function createHeaders(RequestInterface $request, array $options)
+    {
+        $curlHeaders = [];
+        $headers = array_keys($request->getHeaders());
+        foreach ($headers as $name) {
+            if (strtolower($name) === 'content-length') {
+                $values = [0];
+                if (array_key_exists(CURLOPT_POSTFIELDS, $options)) {
+                    $values = [strlen($options[CURLOPT_POSTFIELDS])];
+                }
+            } else {
+                $values = $request->getHeader($name);
+            }
+            foreach ($values as $value) {
+                $curlHeaders[] = $name . ': ' . $value;
+            }
+        }
+        return $curlHeaders;
     }
 }
