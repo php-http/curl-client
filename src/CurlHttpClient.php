@@ -12,15 +12,10 @@ use Http\Message\MessageFactory;
 use Http\Message\MessageFactoryAwareTemplate;
 use Http\Message\StreamFactory;
 use Http\Message\StreamFactoryAwareTemplate;
-use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use RuntimeException;
-use UnexpectedValueException;
 
 /**
- * Use php cURL extension to perform HTTP requests
- *
  * @author Kemist <kemist1980@gmail.com>
  * @author Михаил Красильников <m.krasilnikov@yandex.ru>
  * @author Blake Williams <github@shabbyrobe.org>
@@ -98,8 +93,8 @@ class CurlHttpClient implements HttpClient
      *
      * @return ResponseInterface
      *
-     * @throws UnexpectedValueException if unsupported HTTP version requested
-     * @throws InvalidArgumentException
+     * @throws \UnexpectedValueException if unsupported HTTP version requested
+     * @throws \InvalidArgumentException
      * @throws RequestException
      *
      * @since 1.00
@@ -110,7 +105,7 @@ class CurlHttpClient implements HttpClient
 
         try {
             $this->request($options, $raw, $info);
-        } catch (RuntimeException $e) {
+        } catch (\RuntimeException $e) {
             throw new RequestException($e->getMessage(), $request, $e);
         }
 
@@ -168,7 +163,7 @@ class CurlHttpClient implements HttpClient
      * @param string $raw     raw response
      * @param array  $info    cURL response info
      *
-     * @throws RuntimeException on cURL error
+     * @throws \RuntimeException on cURL error
      *
      * @since 1.00
      */
@@ -184,7 +179,7 @@ class CurlHttpClient implements HttpClient
         $raw = curl_exec($this->handle);
 
         if (curl_errno($this->handle) > 0) {
-            throw new RuntimeException(
+            throw new \RuntimeException(
                 sprintf(
                     'Curl error: (%d) %s',
                     curl_errno($this->handle),
@@ -200,7 +195,7 @@ class CurlHttpClient implements HttpClient
      *
      * @param RequestInterface $request
      *
-     * @throws UnexpectedValueException if unsupported HTTP version requested
+     * @throws \UnexpectedValueException if unsupported HTTP version requested
      *
      * @return array
      */
@@ -220,7 +215,7 @@ class CurlHttpClient implements HttpClient
         $options[CURLOPT_TIMEOUT] = $this->settings['timeout'];
 
         if (in_array($request->getMethod(), ['OPTIONS', 'POST', 'PUT'], true)) {
-            /* cURL allows request body only for these methods. */
+            // cURL allows request body only for these methods.
             $body = (string) $request->getBody();
             if ('' !== $body) {
                 $options[CURLOPT_POSTFIELDS] = $body;
@@ -230,7 +225,7 @@ class CurlHttpClient implements HttpClient
         if ($request->getMethod() === 'HEAD') {
             $options[CURLOPT_NOBODY] = true;
         } elseif ($request->getMethod() !== 'GET') {
-            /* GET is a default method. Other methods should be specified explicitly. */
+            // GET is a default method. Other methods should be specified explicitly.
             $options[CURLOPT_CUSTOMREQUEST] = $request->getMethod();
         }
 
@@ -248,7 +243,7 @@ class CurlHttpClient implements HttpClient
      *
      * @param string $requestVersion
      *
-     * @throws UnexpectedValueException if unsupported version requested
+     * @throws \UnexpectedValueException if unsupported version requested
      *
      * @return int
      */
@@ -263,7 +258,7 @@ class CurlHttpClient implements HttpClient
                 if (defined('CURL_HTTP_VERSION_2_0')) {
                     return CURL_HTTP_VERSION_2_0;
                 }
-                throw new UnexpectedValueException('libcurl 7.33 needed for HTTP 2.0 support');
+                throw new \UnexpectedValueException('libcurl 7.33 needed for HTTP 2.0 support');
         }
         return CURL_HTTP_VERSION_NONE;
     }
