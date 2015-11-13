@@ -12,14 +12,15 @@ php:
   - 7.0
   - hhvm
 
+env:
+  global:
+    - TEST_COMMAND="composer test"
+
 matrix:
   fast_finish: true
   include:
     - php: 5.5
-      env:
-        - COMPOSER_FLAGS="--prefer-stable --prefer-lowest"
-        - COVERAGE=true
-        - PHPUNIT_FLAGS="--coverage-clover build/coverage.xml"
+      env: COMPOSER_FLAGS="--prefer-stable --prefer-lowest" COVERAGE=true PHPUNIT_FLAGS="--coverage-clover build/coverage.xml"
 
 before_install:
   - travis_retry composer self-update
@@ -29,7 +30,8 @@ install:
 
 before_script: vendor/bin/http_test_server > /dev/null 2>&1 &
 
-script: vendor/bin/phpunit ${PHPUNIT_FLAGS}
+script:
+  - $TEST_COMMAND
 
 after_success:
   - if [[ "$COVERAGE" = true ]]; then wget https://scrutinizer-ci.com/ocular.phar; fi
