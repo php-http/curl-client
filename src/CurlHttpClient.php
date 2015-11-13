@@ -1,9 +1,4 @@
 <?php
-/**
- * PSR-7 compatible cURL based HTTP client
- *
- * @license http://opensource.org/licenses/MIT MIT
- */
 namespace Http\Curl;
 
 use Http\Client\Exception\RequestException;
@@ -16,12 +11,15 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * @author Kemist <kemist1980@gmail.com>
- * @author Михаил Красильников <m.krasilnikov@yandex.ru>
- * @author Blake Williams <github@shabbyrobe.org>
+ * PSR-7 compatible cURL based HTTP client
  *
- * @api
- * @since  1.00
+ * @license http://opensource.org/licenses/MIT MIT
+ *
+ * @author  Kemist <kemist1980@gmail.com>
+ * @author  Михаил Красильников <m.krasilnikov@yandex.ru>
+ * @author  Blake Williams <github@shabbyrobe.org>
+ *
+ * @since   1.0.0
  */
 class CurlHttpClient implements HttpClient
 {
