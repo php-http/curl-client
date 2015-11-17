@@ -14,12 +14,11 @@
         "php": ">=5.5",
         "ext-curl": "*",
         "php-http/httplug": "^1.0",
-        "php-http/httplug-async": "dev-master",
-        "php-http/message-factory": "^0.2"
+        "php-http/message-factory": "^0.3"
     },
     "require-dev": {
         "guzzlehttp/psr7": "^1.0",
-        "php-http/adapter-integration-tests": "^0.2",
+        "php-http/adapter-integration-tests": "dev-master",
         "phpunit/phpunit": "^4.8@stable",
         "zendframework/zend-diactoros": "^1.0"
     },
