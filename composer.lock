@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "894e526a7162a59e97407fa4335a30f8",
-    "content-hash": "44b369ee9746f2e9c5645efeaf8340a5",
+    "hash": "7c8659e0289cfd07d68f39ac4b73de09",
+    "content-hash": "9c5d91cc4bb76aa1053ddfd71913b568",
     "packages": [
         {
             "name": "php-http/httplug",
@@ -61,6 +61,54 @@
                 "http"
             ],
             "time": "2015-10-26 09:04:13"
+        },
+        {
+            "name": "php-http/httplug-async",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-http/httplug-async.git",
+                "reference": "338b92f8c089e5827a54d4037c62ba1dbc62e9f2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-http/httplug-async/zipball/338b92f8c089e5827a54d4037c62ba1dbc62e9f2",
+                "reference": "338b92f8c089e5827a54d4037c62ba1dbc62e9f2",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4",
+                "php-http/httplug": "^1.0@dev"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Http\\Client\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Joel Wurtz",
+                    "email": "joel.wurtz@gmail.com"
+                }
+            ],
+            "description": "HTTPlug Async, the HTTP asynchronous client abstraction for PHP",
+            "homepage": "http://php-http.org",
+            "keywords": [
+                "async",
+                "client",
+                "http"
+            ],
+            "time": "2015-11-05 09:08:17"
         },
         {
             "name": "php-http/message-factory",
@@ -398,54 +446,6 @@
                 "message"
             ],
             "time": "2015-10-31 17:33:42"
-        },
-        {
-            "name": "php-http/httplug-async",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-http/httplug-async.git",
-                "reference": "338b92f8c089e5827a54d4037c62ba1dbc62e9f2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-http/httplug-async/zipball/338b92f8c089e5827a54d4037c62ba1dbc62e9f2",
-                "reference": "338b92f8c089e5827a54d4037c62ba1dbc62e9f2",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.4",
-                "php-http/httplug": "^1.0@dev"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "0.1-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Http\\Client\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Joel Wurtz",
-                    "email": "joel.wurtz@gmail.com"
-                }
-            ],
-            "description": "HTTPlug Async, the HTTP asynchronous client abstraction for PHP",
-            "homepage": "http://php-http.org",
-            "keywords": [
-                "async",
-                "client",
-                "http"
-            ],
-            "time": "2015-11-05 09:08:17"
         },
         {
             "name": "phpdocumentor/reflection-docblock",
@@ -798,16 +798,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "4.8.17",
+            "version": "4.8.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "6cc501c1adf86482fbb54fb2958e1c7685f57a61"
+                "reference": "fa33d4ad96481b91df343d83e8c8aabed6b1dfd3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/6cc501c1adf86482fbb54fb2958e1c7685f57a61",
-                "reference": "6cc501c1adf86482fbb54fb2958e1c7685f57a61",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/fa33d4ad96481b91df343d83e8c8aabed6b1dfd3",
+                "reference": "fa33d4ad96481b91df343d83e8c8aabed6b1dfd3",
                 "shasum": ""
             },
             "require": {
@@ -866,7 +866,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-11-10 21:39:46"
+            "time": "2015-11-11 11:32:49"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -1444,6 +1444,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "php-http/httplug-async": 20,
         "phpunit/phpunit": 0
     },
     "prefer-stable": true,

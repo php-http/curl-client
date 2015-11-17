@@ -11,12 +11,12 @@ use Zend\Diactoros\Response;
 /**
  * Tests for Http\Curl\CurlHttpClient
  */
-class CurlHttpClientDiactorosTest extends CurlHttpClientTestCase
+class CurlHttpAsyncClientDiactorosTest extends CurlHttpAsyncClientTestCase
 {
     /**
      * @return HttpClient
      */
-    protected function createHttpAdapter()
+    protected function createHttpAsyncClient()
     {
         return new CurlHttpClient(new DiactorosFactory(), new DiactorosStreamFactory());
     }

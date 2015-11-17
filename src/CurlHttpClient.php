@@ -1,12 +1,13 @@
 <?php
 namespace Http\Curl;
 
+use Http\Client\Exception;
 use Http\Client\Exception\RequestException;
+use Http\Client\HttpAsyncClient;
 use Http\Client\HttpClient;
+use Http\Client\Promise;
 use Http\Message\MessageFactory;
-use Http\Message\MessageFactoryAwareTemplate;
 use Http\Message\StreamFactory;
-use Http\Message\StreamFactoryAwareTemplate;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -15,30 +16,41 @@ use Psr\Http\Message\ResponseInterface;
  *
  * @license http://opensource.org/licenses/MIT MIT
  *
- * @author  Kemist <kemist1980@gmail.com>
  * @author  Михаил Красильников <m.krasilnikov@yandex.ru>
  * @author  Blake Williams <github@shabbyrobe.org>
  *
- * @since   1.0.0
+ * @api
+ * @since   1.0
  */
-class CurlHttpClient implements HttpClient
+class CurlHttpClient implements HttpClient, HttpAsyncClient
 {
-    use MessageFactoryAwareTemplate;
-    use StreamFactoryAwareTemplate;
-
-    /**
-     * cURL handle opened resource
-     *
-     * @var resource|null
-     */
-    private $handle = null;
-
     /**
      * Client settings
      *
      * @var array
      */
     private $settings;
+
+    /**
+     * cURL response parser
+     *
+     * @var ResponseParser
+     */
+    private $responseParser;
+
+    /**
+     * cURL synchronous requests handle
+     *
+     * @var resource|null
+     */
+    private $handle = null;
+
+    /**
+     * Simultaneous requests runner
+     *
+     * @var MultiRunner|null
+     */
+    private $multiRunner = null;
 
     /**
      * Create new client
@@ -54,15 +66,14 @@ class CurlHttpClient implements HttpClient
      * @param StreamFactory  $streamFactory  HTTP Stream factory
      * @param array          $options        Client options
      *
-     * @since 1.00
+     * @since 1.0
      */
     public function __construct(
         MessageFactory $messageFactory,
         StreamFactory $streamFactory,
         array $options = []
     ) {
-        $this->setMessageFactory($messageFactory);
-        $this->setStreamFactory($streamFactory);
+        $this->responseParser = new ResponseParser($messageFactory, $streamFactory);
         $this->settings = array_merge(
             [
                 'curl_options' => [],
@@ -95,74 +106,12 @@ class CurlHttpClient implements HttpClient
      * @throws \InvalidArgumentException
      * @throws RequestException
      *
-     * @since 1.00
+     * @since 1.0
      */
     public function sendRequest(RequestInterface $request)
     {
         $options = $this->createCurlOptions($request);
 
-        try {
-            $this->request($options, $raw, $info);
-        } catch (\RuntimeException $e) {
-            throw new RequestException($e->getMessage(), $request, $e);
-        }
-
-        $response = $this->getMessageFactory()->createResponse();
-
-        $headerSize = $info['header_size'];
-        $rawHeaders = substr($raw, 0, $headerSize);
-        $headers = $this->parseRawHeaders($rawHeaders);
-
-        foreach ($headers as $header) {
-            $header = trim($header);
-            if ('' === $header) {
-                continue;
-            }
-
-            // Status line
-            if (substr(strtolower($header), 0, 5) === 'http/') {
-                $parts = explode(' ', $header, 3);
-                $response = $response
-                    ->withStatus($parts[1])
-                    ->withProtocolVersion(substr($parts[0], 5));
-                continue;
-            }
-
-            // Extract header
-            $parts = explode(':', $header, 2);
-            $headerName = trim(urldecode($parts[0]));
-            $headerValue = trim(urldecode($parts[1]));
-            if ($response->hasHeader($headerName)) {
-                $response = $response->withAddedHeader($headerName, $headerValue);
-            } else {
-                $response = $response->withHeader($headerName, $headerValue);
-            }
-        }
-
-        /*
-         * substr can return boolean value for empty string. But createStream does not support
-         * booleans. Converting to string.
-         */
-        $content = (string) substr($raw, $headerSize);
-        $stream = $this->getStreamFactory()->createStream($content);
-        $response = $response->withBody($stream);
-
-        return $response;
-    }
-
-    /**
-     * Perform request via cURL
-     *
-     * @param array  $options cURL options
-     * @param string $raw     raw response
-     * @param array  $info    cURL response info
-     *
-     * @throws \RuntimeException on cURL error
-     *
-     * @since 1.00
-     */
-    protected function request($options, &$raw, &$info)
-    {
         if (is_resource($this->handle)) {
             curl_reset($this->handle);
         } else {
@@ -173,15 +122,40 @@ class CurlHttpClient implements HttpClient
         $raw = curl_exec($this->handle);
 
         if (curl_errno($this->handle) > 0) {
-            throw new \RuntimeException(
-                sprintf(
-                    'Curl error: (%d) %s',
-                    curl_errno($this->handle),
-                    curl_error($this->handle)
-                )
-            );
+            throw new RequestException(curl_error($this->handle), $request);
         }
+
         $info = curl_getinfo($this->handle);
+
+        return $this->responseParser->parse($raw, $info);
+    }
+
+    /**
+     * Sends a PSR-7 request in an asynchronous way.
+     *
+     * @param RequestInterface $request
+     *
+     * @return Promise
+     *
+     * @throws Exception
+     *
+     * @since 1.0
+     */
+    public function sendAsyncRequest(RequestInterface $request)
+    {
+        if (!$this->multiRunner instanceof MultiRunner) {
+            $this->multiRunner = new MultiRunner($this->responseParser);
+        }
+
+        $handle = curl_init();
+        $options = $this->createCurlOptions($request);
+        curl_setopt_array($handle, $options);
+
+        $core = new PromiseCore($request, $handle);
+        $promise = new CurlPromise($core, $this->multiRunner);
+        $this->multiRunner->add($core);
+
+        return $promise;
     }
 
     /**
@@ -283,23 +257,5 @@ class CurlHttpClient implements HttpClient
             }
         }
         return $curlHeaders;
-    }
-
-    /**
-     * Parse raw headers from HTTP response
-     *
-     * @param string $rawHeaders
-     *
-     * @return string[]
-     */
-    private function parseRawHeaders($rawHeaders)
-    {
-        $allHeaders = explode("\r\n\r\n", $rawHeaders);
-        $lastHeaders = trim(array_pop($allHeaders));
-        while (count($allHeaders) > 0 && '' === $lastHeaders) {
-            $lastHeaders = trim(array_pop($allHeaders));
-        }
-        $headers = explode("\r\n", $lastHeaders);
-        return $headers;
     }
 }

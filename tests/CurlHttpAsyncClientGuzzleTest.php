@@ -9,12 +9,12 @@ use Http\Discovery\MessageFactory\GuzzleFactory;
 /**
  * Tests for Http\Curl\CurlHttpClient
  */
-class CurlHttpClientGuzzleTest extends CurlHttpClientTestCase
+class CurlHttpAsyncClientGuzzleTest extends CurlHttpAsyncClientTestCase
 {
     /**
      * @return HttpClient
      */
-    protected function createHttpAdapter()
+    protected function createHttpAsyncClient()
     {
         return new CurlHttpClient(new GuzzleFactory(), new GuzzleStreamFactory());
     }
