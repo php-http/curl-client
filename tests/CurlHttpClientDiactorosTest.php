@@ -3,8 +3,8 @@ namespace Http\Curl\Tests;
 
 use Http\Client\HttpClient;
 use Http\Curl\CurlHttpClient;
-use Http\Curl\Tests\StreamFactory\DiactorosStreamFactory;
-use Http\Discovery\MessageFactory\DiactorosFactory;
+use Http\Discovery\MessageFactory\DiactorosMessageFactory;
+use Http\Discovery\StreamFactory\DiactorosStreamFactory;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
 
@@ -18,6 +18,6 @@ class CurlHttpClientDiactorosTest extends CurlHttpClientTestCase
      */
     protected function createHttpAdapter()
     {
-        return new CurlHttpClient(new DiactorosFactory(), new DiactorosStreamFactory());
+        return new CurlHttpClient(new DiactorosMessageFactory(), new DiactorosStreamFactory());
     }
 }
