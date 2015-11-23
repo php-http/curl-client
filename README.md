@@ -20,12 +20,50 @@ $ composer require php-http/curl-client
 
 ## Usage
 
-TODO
+### Using [php-http/discovery](https://packagist.org/packages/php-http/discovery):
+
+```php
+use Http\Client\HttpClient;
+use Http\Curl\CurlHttpClient;
+use Http\Discovery\MessageFactory\GuzzleMessageFactory;
+use Http\Discovery\StreamFactory\GuzzleStreamFactory;
+
+$messageFactory = new GuzzleMessageFactory();
+$client = new CurlHttpClient($messageFactory, new GuzzleStreamFactory());
+
+$request = $messageFactory->createRequest('GET', 'http://example.com/);
+$response = $client->sendRequest($request);
+
+```
+
+### Configuring client
+
+You can use [cURL options](http://php.net/curl_setopt) to configure CurlHttpClient:
+
+```php
+use Http\Client\HttpClient;
+use Http\Curl\CurlHttpClient;
+use Http\Discovery\MessageFactory\GuzzleMessageFactory;
+use Http\Discovery\StreamFactory\GuzzleStreamFactory;
+
+$options = [
+    CURLOPT_CONNECTTIMEOUT => 10, // The number of seconds to wait while trying to connect. 
+    CURLOPT_SSL_VERIFYPEER => false // Stop cURL from verifying the peer's certificate
+];
+$client = new CurlHttpClient(new GuzzleMessageFactory(), new GuzzleStreamFactory(), $options);
+```
+
+Keep in mind that CurlHttpClient can overwrite some options like `CURLOPT_RETURNTRANSFER` or
+`CURLOPT_FOLLOWLOCATION`.  
+
+## Documentation
+
+Please see the [official documentation](http://php-http.readthedocs.org/en/latest/).
 
 ## Testing
 
 ``` bash
-$ phpunit
+$ composer test
 ```
 
 ## Contributing
