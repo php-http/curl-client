@@ -51,4 +51,12 @@ abstract class CurlHttpAsyncClientTestCase extends HttpAsyncClientTest
             $body
         );
     }
+
+    public function testSuccessiveCallMustUseResponseInterface()
+    {
+        if (defined('HHVM_VERSION')) {
+            static::markTestSkipped('This test can not run under HHVM');
+        }
+        parent::testSuccessiveCallMustUseResponseInterface();
+    }
 }
