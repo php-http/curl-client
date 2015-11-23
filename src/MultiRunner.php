@@ -95,7 +95,7 @@ class MultiRunner
                     );
                     $core->fulfill($response);
                 } else {
-                    $error = curl_strerror($info['result']);
+                    $error = curl_error($info['handle']);
                     $exception = new RequestException($error, $core->getRequest());
                     $core->reject($exception);
                 }
