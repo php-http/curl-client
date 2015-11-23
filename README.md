@@ -31,7 +31,7 @@ use Http\Discovery\StreamFactory\GuzzleStreamFactory;
 $messageFactory = new GuzzleMessageFactory();
 $client = new CurlHttpClient($messageFactory, new GuzzleStreamFactory());
 
-$request = $messageFactory->createRequest('GET', 'http://example.com/);
+$request = $messageFactory->createRequest('GET', 'http://example.com/');
 $response = $client->sendRequest($request);
 
 ```
