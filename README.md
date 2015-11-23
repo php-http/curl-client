@@ -53,8 +53,21 @@ $options = [
 $client = new CurlHttpClient(new GuzzleMessageFactory(), new GuzzleStreamFactory(), $options);
 ```
 
-Keep in mind that CurlHttpClient can overwrite some options like `CURLOPT_RETURNTRANSFER` or
-`CURLOPT_FOLLOWLOCATION`.  
+These options can not ne used:
+
+* CURLOPT_CUSTOMREQUEST
+* CURLOPT_FOLLOWLOCATION
+* CURLOPT_HEADER
+* CURLOPT_HTTP_VERSION
+* CURLOPT_HTTPHEADER
+* CURLOPT_NOBODY
+* CURLOPT_POSTFIELDS
+* CURLOPT_RETURNTRANSFER
+* CURLOPT_URL
+
+These options can be overwritten by CurlHttpClient:
+
+* CURLOPT_USERPWD
 
 ## Documentation
 
