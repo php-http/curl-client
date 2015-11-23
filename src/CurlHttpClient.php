@@ -25,11 +25,11 @@ use Psr\Http\Message\ResponseInterface;
 class CurlHttpClient implements HttpClient, HttpAsyncClient
 {
     /**
-     * Client settings
+     * cURL options
      *
      * @var array
      */
-    private $settings;
+    private $options;
 
     /**
      * cURL response parser
@@ -64,7 +64,7 @@ class CurlHttpClient implements HttpClient, HttpAsyncClient
      *
      * @param MessageFactory $messageFactory HTTP Message factory
      * @param StreamFactory  $streamFactory  HTTP Stream factory
-     * @param array          $options        Client options
+     * @param array          $options        cURL options (see http://php.net/curl_setopt)
      *
      * @since 1.0
      */
@@ -74,15 +74,7 @@ class CurlHttpClient implements HttpClient, HttpAsyncClient
         array $options = []
     ) {
         $this->responseParser = new ResponseParser($messageFactory, $streamFactory);
-        $this->settings = array_merge(
-            [
-                'curl_options' => [],
-                'connection_timeout' => 3,
-                'ssl_verify_peer' => true,
-                'timeout' => 10
-            ],
-            $options
-        );
+        $this->options = $options;
     }
 
     /**
@@ -169,18 +161,14 @@ class CurlHttpClient implements HttpClient, HttpAsyncClient
      */
     private function createCurlOptions(RequestInterface $request)
     {
-        $options = $this->settings['curl_options'];
+        $options = $this->options;
 
         $options[CURLOPT_HEADER] = true;
         $options[CURLOPT_RETURNTRANSFER] = true;
+        $options[CURLOPT_FOLLOWLOCATION] = false;
 
         $options[CURLOPT_HTTP_VERSION] = $this->getProtocolVersion($request->getProtocolVersion());
         $options[CURLOPT_URL] = (string) $request->getUri();
-
-        $options[CURLOPT_CONNECTTIMEOUT] = $this->settings['connection_timeout'];
-        $options[CURLOPT_FOLLOWLOCATION] = false;
-        $options[CURLOPT_SSL_VERIFYPEER] = $this->settings['ssl_verify_peer'];
-        $options[CURLOPT_TIMEOUT] = $this->settings['timeout'];
 
         if (in_array($request->getMethod(), ['OPTIONS', 'POST', 'PUT'], true)) {
             // cURL allows request body only for these methods.
