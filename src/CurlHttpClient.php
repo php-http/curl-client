@@ -130,6 +130,7 @@ class CurlHttpClient implements HttpClient, HttpAsyncClient
      * @return Promise
      *
      * @throws Exception
+     * @throws \UnexpectedValueException if unsupported HTTP version requested
      *
      * @since 1.0
      */
