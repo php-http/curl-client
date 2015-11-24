@@ -10,3 +10,6 @@ trim_trailing_whitespace = true
 
 [*.yml*]
 indent_size = 2
+
+[*.http]
+end_of_line = crlf

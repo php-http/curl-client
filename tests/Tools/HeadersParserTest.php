@@ -14,7 +14,7 @@ class HeadersParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidHeaders()
     {
-        $headers = file_get_contents(__DIR__ . '/data/headers_valid.txt');
+        $headers = file_get_contents(__DIR__ . '/data/headers_valid.http');
         $response = MessageFactoryDiscovery::find()->createResponse();
         $parser = new HeadersParser();
         $response = $parser->parseString($headers, $response);
@@ -32,7 +32,7 @@ class HeadersParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidStatusLine()
     {
-        $headers = file_get_contents(__DIR__ . '/data/headers_invalid_status.txt');
+        $headers = file_get_contents(__DIR__ . '/data/headers_invalid_status.http');
         $response = MessageFactoryDiscovery::find()->createResponse();
         $parser = new HeadersParser();
         $parser->parseString($headers, $response);
@@ -46,7 +46,7 @@ class HeadersParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidHeaderLine()
     {
-        $headers = file_get_contents(__DIR__ . '/data/headers_invalid_header.txt');
+        $headers = file_get_contents(__DIR__ . '/data/headers_invalid_header.http');
         $response = MessageFactoryDiscovery::find()->createResponse();
         $parser = new HeadersParser();
         $parser->parseString($headers, $response);
