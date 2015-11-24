@@ -1,4 +1,5 @@
 tests/           export-ignore
+tests/Tools/data/ eol=crlf
 .editorconfig    export-ignore
 .gitattributes   export-ignore
 .gitignore       export-ignore
