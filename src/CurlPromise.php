@@ -16,8 +16,6 @@ use Psr\Http\Message\ResponseInterface;
  * @license http://opensource.org/licenses/MIT MIT
  *
  * @author  Михаил Красильников <m.krasilnikov@yandex.ru>
- *
- * @since   1.0
  */
 class CurlPromise implements Promise
 {
