@@ -54,7 +54,7 @@ class MultiRunner
     }
 
     /**
-     * Add promise core
+     * Add promise to runner
      *
      * @param PromiseCore $core
      */
@@ -75,6 +75,22 @@ class MultiRunner
     }
 
     /**
+     * Remove promise from runner
+     *
+     * @param PromiseCore $core
+     */
+    public function remove(PromiseCore $core)
+    {
+        foreach ($this->cores as $index => $existed) {
+            if ($existed === $core) {
+                curl_multi_remove_handle($this->multiHandle, $core->getHandle());
+                unset($this->cores[$index]);
+                return;
+            }
+        }
+    }
+
+    /**
      * Wait for request(s) to be completed.
      *
      * @param PromiseCore|null $targetCore
@@ -86,18 +102,32 @@ class MultiRunner
             $info = curl_multi_info_read($this->multiHandle);
             if (false !== $info) {
                 $core = $this->findCoreByHandle($info['handle']);
-                if (CURLE_OK === $info['result']) {
-                    $response = $this->responseParser->parse(
-                        curl_multi_getcontent($info['handle']),
-                        curl_getinfo($info['handle'])
-                    );
-                    $core->fulfill($response);
-                } else {
-                    $error = curl_error($info['handle']);
-                    $exception = new RequestException($error, $core->getRequest());
-                    $core->reject($exception);
+
+                if (null === $core) {
+                    // We have no promise for this handle. Drop it.
+                    curl_multi_remove_handle($this->multiHandle, $info['handle']);
+                    continue;
                 }
 
+                if (CURLE_OK === $info['result']) {
+                    try {
+                        $response = $this->responseParser->parse(
+                            curl_multi_getcontent($core->getHandle()),
+                            curl_getinfo($core->getHandle())
+                        );
+                        $core->fulfill($response);
+                    } catch (\Exception $e) {
+                        $core->reject(
+                            new RequestException($e->getMessage(), $core->getRequest(), $e)
+                        );
+                    }
+                } else {
+                    $error = curl_error($core->getHandle());
+                    $core->reject(new RequestException($error, $core->getRequest()));
+                }
+                $this->remove($core);
+
+                // This is a promise we are waited for. So exiting wait().
                 if ($core === $targetCore) {
                     return;
                 }

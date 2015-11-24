@@ -95,7 +95,6 @@ class CurlHttpClient implements HttpClient, HttpAsyncClient
      * @return ResponseInterface
      *
      * @throws \UnexpectedValueException if unsupported HTTP version requested
-     * @throws \InvalidArgumentException
      * @throws RequestException
      *
      * @since 1.0
@@ -119,7 +118,12 @@ class CurlHttpClient implements HttpClient, HttpAsyncClient
 
         $info = curl_getinfo($this->handle);
 
-        return $this->responseParser->parse($raw, $info);
+        try {
+            $response = $this->responseParser->parse($raw, $info);
+        } catch (\Exception $e) {
+            throw new RequestException($e->getMessage(), $request, $e);
+        }
+        return $response;
     }
 
     /**
