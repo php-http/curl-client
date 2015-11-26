@@ -23,7 +23,6 @@ $ composer require php-http/curl-client
 ### Using [php-http/discovery](https://packagist.org/packages/php-http/discovery):
 
 ```php
-use Http\Client\HttpClient;
 use Http\Curl\CurlHttpClient;
 use Http\Discovery\MessageFactory\GuzzleMessageFactory;
 use Http\Discovery\StreamFactory\GuzzleStreamFactory;
@@ -33,7 +32,20 @@ $client = new CurlHttpClient($messageFactory, new GuzzleStreamFactory());
 
 $request = $messageFactory->createRequest('GET', 'http://example.com/');
 $response = $client->sendRequest($request);
+```
 
+### Using [mekras/httplug-diactoros-bridge](https://packagist.org/packages/mekras/httplug-diactoros-bridge):
+
+```php
+use Http\Curl\CurlHttpClient;
+use Mekras\HttplugDiactorosBridge\DiactorosMessageFactory;
+use Mekras\HttplugDiactorosBridge\DiactorosStreamFactory;
+
+$messageFactory = new DiactorosMessageFactory();
+$client = new CurlHttpClient($messageFactory, new DiactorosStreamFactory());
+
+$request = $messageFactory->createRequest('GET', 'http://example.com/');
+$response = $client->sendRequest($request);
 ```
 
 ### Configuring client
@@ -41,7 +53,6 @@ $response = $client->sendRequest($request);
 You can use [cURL options](http://php.net/curl_setopt) to configure CurlHttpClient:
 
 ```php
-use Http\Client\HttpClient;
 use Http\Curl\CurlHttpClient;
 use Http\Discovery\MessageFactory\GuzzleMessageFactory;
 use Http\Discovery\StreamFactory\GuzzleStreamFactory;
