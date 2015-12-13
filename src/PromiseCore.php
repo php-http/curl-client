@@ -2,7 +2,7 @@
 namespace Http\Curl;
 
 use Http\Client\Exception;
-use Http\Client\Promise;
+use Http\Promise\Promise;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -192,7 +192,12 @@ class PromiseCore
     {
         $this->exception = $exception;
         $this->state = Promise::REJECTED;
-        $this->exception = $this->call($this->onRejected, $this->exception);
+
+        try {
+            $this->call($this->onRejected, $this->exception);
+        } catch (Exception $exception) {
+            $this->exception = $exception;
+        }
     }
 
     /**

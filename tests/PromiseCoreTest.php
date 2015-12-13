@@ -3,7 +3,7 @@ namespace Http\Curl\Tests;
 
 use Http\Client\Exception;
 use Http\Client\Exception\RequestException;
-use Http\Client\Promise;
+use Http\Promise\Promise;
 use Http\Curl\PromiseCore;
 use Psr\Http\Message\ResponseInterface;
 
@@ -56,7 +56,7 @@ class PromiseCoreTest extends BaseUnitTestCase
         $core = new PromiseCore($request, $this->handle);
         $core->addOnRejected(
             function (RequestException $exception) {
-                return new RequestException('Foo', $exception->getRequest(), $exception);
+                throw new RequestException('Foo', $exception->getRequest(), $exception);
             }
         );
 

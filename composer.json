@@ -13,7 +13,7 @@
     "require": {
         "php": ">=5.5",
         "ext-curl": "*",
-        "php-http/httplug": "^1.0.0-alpha2",
+        "php-http/httplug": "1.0.0-alpha3",
         "php-http/message-factory": "^0.4@dev"
     },
     "require-dev": {

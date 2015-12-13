@@ -2,8 +2,7 @@
 namespace Http\Curl;
 
 use Http\Client\Exception;
-use Http\Client\Promise;
-use Psr\Http\Message\ResponseInterface;
+use Http\Promise\Promise;
 
 /**
  * Promise represents a response that may not be available yet, but will be resolved at some point
@@ -82,40 +81,27 @@ class CurlPromise implements Promise
     }
 
     /**
-     * Return the value of the promise (fulfilled).
-     *
-     * @return ResponseInterface Response Object only when the Promise is fulfilled.
-     *
-     * @throws \LogicException When the promise is not fulfilled.
-     */
-    public function getResponse()
-    {
-        return $this->core->getResponse();
-    }
-
-    /**
-     * Get the reason why the promise was rejected.
-     *
-     * If the exception is an instance of Http\Client\Exception\HttpException it will contain
-     * the response object with the status code and the http reason.
-     *
-     * @return Exception Exception Object only when the Promise is rejected.
-     *
-     * @throws \LogicException When the promise is not rejected.
-     */
-    public function getException()
-    {
-        return $this->core->getException();
-    }
-
-    /**
      * Wait for the promise to be fulfilled or rejected.
      *
      * When this method returns, the request has been resolved and the appropriate callable has
      * terminated.
+     *
+     * @param bool $unwrap
+     *
+     * @return mixed
+     *
+     * @throws \Exception When the rejection reason is an exception.
      */
-    public function wait()
+    public function wait($unwrap = true)
     {
         $this->runner->wait($this->core);
+
+        if ($unwrap) {
+            if ($this->core->getState() == self::REJECTED) {
+                throw $this->core->getException();
+            }
+
+            return $this->core->getResponse();
+        }
     }
 }
