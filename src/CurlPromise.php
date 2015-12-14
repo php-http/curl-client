@@ -83,14 +83,15 @@ class CurlPromise implements Promise
     /**
      * Wait for the promise to be fulfilled or rejected.
      *
-     * When this method returns, the request has been resolved and the appropriate callable has
-     * terminated.
+     * When this method returns, the request has been resolved and the appropriate callable has terminated.
      *
-     * @param bool $unwrap
+     * When called with the unwrap option
      *
-     * @return mixed
+     * @param bool $unwrap Whether to return resolved value / throw reason or not
      *
-     * @throws \Exception When the rejection reason is an exception.
+     * @return \Psr\Http\Message\ResponseInterface|null Resolved value, null if $unwrap is set to false
+     *
+     * @throws \Http\Client\Exception The rejection reason.
      */
     public function wait($unwrap = true)
     {
@@ -103,5 +104,6 @@ class CurlPromise implements Promise
 
             return $this->core->getResponse();
         }
+        return null;
     }
 }
