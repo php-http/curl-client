@@ -18,7 +18,7 @@
     },
     "require-dev": {
         "guzzlehttp/psr7": "^1.0",
-        "php-http/adapter-integration-tests": "dev-master#7c681907547e24b26f352bc48444527c28bfc524",
+        "php-http/adapter-integration-tests": "dev-master#48e5c0ee7b19772ab00060498f91886268b945c4",
         "php-http/discovery": "^0.3",
         "phpunit/phpunit": "^4.8@stable",
         "zendframework/zend-diactoros": "^1.0"
