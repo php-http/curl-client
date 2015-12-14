@@ -1,7 +1,8 @@
 <?php
 namespace Http\Curl\Tests;
 
-use Http\Client\Promise;
+use Http\Client\Exception\TransferException;
+use Http\Promise\Promise;
 use Http\Curl\CurlPromise;
 use Http\Curl\MultiRunner;
 
@@ -34,14 +35,38 @@ class CurlPromiseTest extends BaseUnitTestCase
 
         $core->expects(static::once())->method('getState')->willReturn('STATE');
         static::assertEquals('STATE', $promise->getState());
+    }
 
-        $core->expects(static::once())->method('getResponse')->willReturn('RESPONSE');
-        static::assertEquals('RESPONSE', $promise->getResponse());
-
-        $core->expects(static::once())->method('getException')->willReturn('EXCEPTION');
-        static::assertEquals('EXCEPTION', $promise->getException());
+    public function testCoreCallWaitFulfilled()
+    {
+        $core = $this->createPromiseCore();
+        $runner = $this->getMockBuilder(MultiRunner::class)->disableOriginalConstructor()
+            ->setMethods(['wait'])->getMock();
+        /** @var MultiRunner|\PHPUnit_Framework_MockObject_MockObject $runner */
+        $promise = new CurlPromise($core, $runner);
 
         $runner->expects(static::once())->method('wait')->with($core);
-        $promise->wait();
+        $core->expects(static::once())->method('getState')->willReturn(Promise::FULFILLED);
+        $core->expects(static::once())->method('getResponse')->willReturn('RESPONSE');
+        static::assertEquals('RESPONSE', $promise->wait());
+    }
+
+    public function testCoreCallWaitRejected()
+    {
+        $core = $this->createPromiseCore();
+        $runner = $this->getMockBuilder(MultiRunner::class)->disableOriginalConstructor()
+            ->setMethods(['wait'])->getMock();
+        /** @var MultiRunner|\PHPUnit_Framework_MockObject_MockObject $runner */
+        $promise = new CurlPromise($core, $runner);
+
+        $runner->expects(static::once())->method('wait')->with($core);
+        $core->expects(static::once())->method('getState')->willReturn(Promise::REJECTED);
+        $core->expects(static::once())->method('getException')->willReturn(new TransferException());
+
+        try {
+            $promise->wait();
+        } catch (TransferException $exception) {
+            static::assertTrue(true);
+        }
     }
 }
