@@ -14,12 +14,12 @@
         "php": ">=5.5",
         "ext-curl": "*",
         "php-http/httplug": "1.0.0-alpha3",
-        "php-http/message-factory": "^0.4@dev"
+        "php-http/message-factory": "^1.0"
     },
     "require-dev": {
         "guzzlehttp/psr7": "^1.0",
         "php-http/adapter-integration-tests": "dev-master#48e5c0ee7b19772ab00060498f91886268b945c4",
-        "php-http/discovery": "^0.3",
+        "php-http/discovery": "dev-master#fd0cbe2ed125cc4f8fcc0378aff9874ce206e858",
         "phpunit/phpunit": "^4.8@stable",
         "zendframework/zend-diactoros": "^1.0"
     },
@@ -31,11 +31,6 @@
     "autoload-dev": {
         "psr-4": {
             "Http\\Curl\\Tests\\": "tests/"
-        }
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "0.1-dev"
         }
     },
     "provide": {
