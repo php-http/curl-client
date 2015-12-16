@@ -5,9 +5,9 @@ use Http\Client\Exception;
 use Http\Client\Exception\RequestException;
 use Http\Client\HttpAsyncClient;
 use Http\Client\HttpClient;
-use Http\Client\Promise;
 use Http\Message\MessageFactory;
 use Http\Message\StreamFactory;
+use Http\Promise\Promise;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
