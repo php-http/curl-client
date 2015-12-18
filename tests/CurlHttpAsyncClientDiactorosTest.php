@@ -2,9 +2,9 @@
 namespace Http\Curl\Tests;
 
 use Http\Client\HttpClient;
+use Http\Client\Utils\MessageFactory\DiactorosMessageFactory;
+use Http\Client\Utils\StreamFactory\DiactorosStreamFactory;
 use Http\Curl\CurlHttpClient;
-use Http\Discovery\MessageFactory\DiactorosMessageFactory;
-use Http\Discovery\StreamFactory\DiactorosStreamFactory;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
 

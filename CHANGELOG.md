@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Compatibility with php-http/httplug 1.0 beta
+- Switch to php-http/discovery 0.4
+
 
 ## 0.4.0 - 2015-12-16
 

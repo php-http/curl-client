@@ -20,12 +20,12 @@ $ composer require php-http/curl-client
 
 ## Usage
 
-### Using [php-http/discovery](https://packagist.org/packages/php-http/discovery):
+### Using [php-http/utils](https://packagist.org/packages/php-http/utils):
 
 ```php
+use Http\Client\Utils\MessageFactory\GuzzleMessageFactory;
+use Http\Client\Utils\StreamFactory\GuzzleStreamFactory;
 use Http\Curl\CurlHttpClient;
-use Http\Discovery\MessageFactory\GuzzleMessageFactory;
-use Http\Discovery\StreamFactory\GuzzleStreamFactory;
 
 $messageFactory = new GuzzleMessageFactory();
 $client = new CurlHttpClient($messageFactory, new GuzzleStreamFactory());
@@ -53,9 +53,9 @@ $response = $client->sendRequest($request);
 You can use [cURL options](http://php.net/curl_setopt) to configure CurlHttpClient:
 
 ```php
+use Http\Client\Utils\MessageFactory\GuzzleMessageFactory;
+use Http\Client\Utils\StreamFactory\GuzzleStreamFactory;
 use Http\Curl\CurlHttpClient;
-use Http\Discovery\MessageFactory\GuzzleMessageFactory;
-use Http\Discovery\StreamFactory\GuzzleStreamFactory;
 
 $options = [
     CURLOPT_CONNECTTIMEOUT => 10, // The number of seconds to wait while trying to connect. 
