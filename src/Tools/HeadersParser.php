@@ -1,5 +1,5 @@
 <?php
-namespace Http\Curl\Tools;
+namespace Http\Client\Curl\Tools;
 
 use Psr\Http\Message\ResponseInterface;
 

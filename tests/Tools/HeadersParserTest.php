@@ -1,7 +1,7 @@
 <?php
-namespace Http\Curl\Tests\Tools;
+namespace Http\Client\Curl\Tests\Tools;
 
-use Http\Curl\Tools\HeadersParser;
+use Http\Client\Curl\Tools\HeadersParser;
 use Http\Discovery\MessageFactoryDiscovery;
 
 /**

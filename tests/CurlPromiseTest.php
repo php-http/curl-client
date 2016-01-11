@@ -1,10 +1,10 @@
 <?php
-namespace Http\Curl\Tests;
+namespace Http\Client\Curl\Tests;
 
+use Http\Client\Curl\CurlPromise;
+use Http\Client\Curl\MultiRunner;
 use Http\Client\Exception\TransferException;
 use Http\Promise\Promise;
-use Http\Curl\CurlPromise;
-use Http\Curl\MultiRunner;
 
 /**
  * Tests for Http\Curl\CurlPromise

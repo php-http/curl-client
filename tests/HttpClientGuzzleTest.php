@@ -1,21 +1,21 @@
 <?php
-namespace Http\Curl\Tests;
+namespace Http\Client\Curl\Tests;
 
+use Http\Client\Curl\Client;
 use Http\Client\HttpClient;
 use Http\Client\Utils\MessageFactory\GuzzleMessageFactory;
 use Http\Client\Utils\StreamFactory\GuzzleStreamFactory;
-use Http\Curl\CurlHttpClient;
 
 /**
- * Tests for Http\Curl\CurlHttpClient
+ * Tests for Http\Curl\Client
  */
-class CurlHttpClientGuzzleTest extends CurlHttpClientTestCase
+class HttpClientGuzzleTest extends HttpClientTestCase
 {
     /**
      * @return HttpClient
      */
     protected function createHttpAdapter()
     {
-        return new CurlHttpClient(new GuzzleMessageFactory(), new GuzzleStreamFactory());
+        return new Client(new GuzzleMessageFactory(), new GuzzleStreamFactory());
     }
 }

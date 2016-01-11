@@ -1,5 +1,5 @@
 <?php
-namespace Http\Curl;
+namespace Http\Client\Curl;
 
 use Http\Client\Exception\RequestException;
 

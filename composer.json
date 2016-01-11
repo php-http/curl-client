@@ -26,12 +26,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Http\\Curl\\": "src/"
+            "Http\\Client\\Curl\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Http\\Curl\\Tests\\": "tests/"
+            "Http\\Client\\Curl\\Tests\\": "tests/"
         }
     },
     "provide": {

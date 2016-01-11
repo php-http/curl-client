@@ -23,12 +23,12 @@ $ composer require php-http/curl-client
 ### Using [php-http/utils](https://packagist.org/packages/php-http/utils):
 
 ```php
+use Http\Client\Curl\Client;
 use Http\Client\Utils\MessageFactory\GuzzleMessageFactory;
 use Http\Client\Utils\StreamFactory\GuzzleStreamFactory;
-use Http\Curl\CurlHttpClient;
 
 $messageFactory = new GuzzleMessageFactory();
-$client = new CurlHttpClient($messageFactory, new GuzzleStreamFactory());
+$client = new Client($messageFactory, new GuzzleStreamFactory());
 
 $request = $messageFactory->createRequest('GET', 'http://example.com/');
 $response = $client->sendRequest($request);
@@ -37,12 +37,12 @@ $response = $client->sendRequest($request);
 ### Using [mekras/httplug-diactoros-bridge](https://packagist.org/packages/mekras/httplug-diactoros-bridge):
 
 ```php
-use Http\Curl\CurlHttpClient;
+use Http\Client\Curl\Client;
 use Mekras\HttplugDiactorosBridge\DiactorosMessageFactory;
 use Mekras\HttplugDiactorosBridge\DiactorosStreamFactory;
 
 $messageFactory = new DiactorosMessageFactory();
-$client = new CurlHttpClient($messageFactory, new DiactorosStreamFactory());
+$client = new Client($messageFactory, new DiactorosStreamFactory());
 
 $request = $messageFactory->createRequest('GET', 'http://example.com/');
 $response = $client->sendRequest($request);
@@ -50,18 +50,18 @@ $response = $client->sendRequest($request);
 
 ### Configuring client
 
-You can use [cURL options](http://php.net/curl_setopt) to configure CurlHttpClient:
+You can use [cURL options](http://php.net/curl_setopt) to configure Client:
 
 ```php
+use Http\Client\Curl\Client;
 use Http\Client\Utils\MessageFactory\GuzzleMessageFactory;
 use Http\Client\Utils\StreamFactory\GuzzleStreamFactory;
-use Http\Curl\CurlHttpClient;
 
 $options = [
     CURLOPT_CONNECTTIMEOUT => 10, // The number of seconds to wait while trying to connect. 
     CURLOPT_SSL_VERIFYPEER => false // Stop cURL from verifying the peer's certificate
 ];
-$client = new CurlHttpClient(new GuzzleMessageFactory(), new GuzzleStreamFactory(), $options);
+$client = new Client(new GuzzleMessageFactory(), new GuzzleStreamFactory(), $options);
 ```
 
 These options can not ne used:
@@ -76,7 +76,7 @@ These options can not ne used:
 * CURLOPT_RETURNTRANSFER
 * CURLOPT_URL
 
-These options can be overwritten by CurlHttpClient:
+These options can be overwritten by Client:
 
 * CURLOPT_USERPWD
 

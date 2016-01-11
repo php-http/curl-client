@@ -1,18 +1,18 @@
 <?php
-namespace Http\Curl\Tests;
+namespace Http\Client\Curl\Tests;
 
-use Http\Client\Tests\HttpClientTest;
+use Http\Client\Tests\HttpAsyncClientTest;
 
 /**
- * Base class for client integration tests
+ * Base class for async client integration tests
  */
-abstract class CurlHttpClientTestCase extends HttpClientTest
+abstract class HttpAsyncClientTestCase extends HttpAsyncClientTest
 {
     /**
      * @dataProvider requestProvider
      * @group        integration
      */
-    public function testSendRequest($method, $uri, array $headers, $body)
+    public function testAsyncSendRequest($method, $uri, array $headers, $body)
     {
         if (defined('HHVM_VERSION')) {
             static::markTestSkipped('This test can not run under HHVM');
@@ -20,7 +20,7 @@ abstract class CurlHttpClientTestCase extends HttpClientTest
         if (null !== $body && !in_array($method, ['OPTIONS', 'POST', 'PUT'], true)) {
             static::markTestSkipped('cURL can not send body using ' . $method);
         }
-        parent::testSendRequest(
+        parent::testAsyncSendRequest(
             $method,
             $uri,
             $headers,
@@ -32,7 +32,7 @@ abstract class CurlHttpClientTestCase extends HttpClientTest
      * @dataProvider requestWithOutcomeProvider
      * @group        integration
      */
-    public function testSendRequestWithOutcome(
+    public function testSendAsyncRequestWithOutcome(
         $uriAndOutcome,
         $protocolVersion,
         array $headers,
@@ -44,11 +44,19 @@ abstract class CurlHttpClientTestCase extends HttpClientTest
         if (null !== $body) {
             static::markTestSkipped('cURL can not send body using GET');
         }
-        parent::testSendRequestWithOutcome(
+        parent::testSendAsyncRequestWithOutcome(
             $uriAndOutcome,
             $protocolVersion,
             $headers,
             $body
         );
+    }
+
+    public function testSuccessiveCallMustUseResponseInterface()
+    {
+        if (defined('HHVM_VERSION')) {
+            static::markTestSkipped('This test can not run under HHVM');
+        }
+        parent::testSuccessiveCallMustUseResponseInterface();
     }
 }

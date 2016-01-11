@@ -1,23 +1,23 @@
 <?php
-namespace Http\Curl\Tests;
+namespace Http\Client\Curl\Tests;
 
+use Http\Client\Curl\Client;
 use Http\Client\HttpClient;
 use Http\Client\Utils\MessageFactory\DiactorosMessageFactory;
 use Http\Client\Utils\StreamFactory\DiactorosStreamFactory;
-use Http\Curl\CurlHttpClient;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
 
 /**
- * Tests for Http\Curl\CurlHttpClient
+ * Tests for Http\Client\Curl\Client
  */
-class CurlHttpAsyncClientDiactorosTest extends CurlHttpAsyncClientTestCase
+class HttpAsyncClientDiactorosTest extends HttpAsyncClientTestCase
 {
     /**
      * @return HttpClient
      */
     protected function createHttpAsyncClient()
     {
-        return new CurlHttpClient(new DiactorosMessageFactory(), new DiactorosStreamFactory());
+        return new Client(new DiactorosMessageFactory(), new DiactorosStreamFactory());
     }
 }

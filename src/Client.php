@@ -1,5 +1,5 @@
 <?php
-namespace Http\Curl;
+namespace Http\Client\Curl;
 
 use Http\Client\Exception;
 use Http\Client\Exception\RequestException;
@@ -22,7 +22,7 @@ use Psr\Http\Message\ResponseInterface;
  * @api
  * @since   1.0
  */
-class CurlHttpClient implements HttpClient, HttpAsyncClient
+class Client implements HttpClient, HttpAsyncClient
 {
     /**
      * cURL options

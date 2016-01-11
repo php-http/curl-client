@@ -1,10 +1,10 @@
 <?php
-namespace Http\Curl\Tests;
+namespace Http\Client\Curl\Tests;
 
+use Http\Client\Curl\PromiseCore;
 use Http\Client\Exception;
 use Http\Client\Exception\RequestException;
 use Http\Promise\Promise;
-use Http\Curl\PromiseCore;
 use Psr\Http\Message\ResponseInterface;
 
 /**

@@ -1,7 +1,7 @@
 <?php
-namespace Http\Curl;
+namespace Http\Client\Curl;
 
-use Http\Curl\Tools\HeadersParser;
+use Http\Client\Curl\Tools\HeadersParser;
 use Http\Message\MessageFactory;
 use Http\Message\StreamFactory;
 use Psr\Http\Message\ResponseInterface;
