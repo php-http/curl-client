@@ -20,15 +20,16 @@ $ composer require php-http/curl-client
 
 ## Usage
 
-### Using [php-http/utils](https://packagist.org/packages/php-http/utils):
+### Using [php-http/discovery](https://packagist.org/packages/php-http/discovery):
 
 ```php
 use Http\Client\Curl\Client;
-use Http\Client\Utils\MessageFactory\GuzzleMessageFactory;
-use Http\Client\Utils\StreamFactory\GuzzleStreamFactory;
+use Http\Discovery\MessageFactoryDiscovery;
+use Http\Discovery\StreamFactoryDiscovery;
 
-$messageFactory = new GuzzleMessageFactory();
-$client = new Client($messageFactory, new GuzzleStreamFactory());
+$messageFactory = MessageFactoryDiscovery::find();
+$streamFactory = StreamFactoryDiscovery::find();
+$client = new Client($messageFactory, $streamFactory);
 
 $request = $messageFactory->createRequest('GET', 'http://example.com/');
 $response = $client->sendRequest($request);
@@ -54,14 +55,14 @@ You can use [cURL options](http://php.net/curl_setopt) to configure Client:
 
 ```php
 use Http\Client\Curl\Client;
-use Http\Client\Utils\MessageFactory\GuzzleMessageFactory;
-use Http\Client\Utils\StreamFactory\GuzzleStreamFactory;
+use Http\Discovery\MessageFactoryDiscovery;
+use Http\Discovery\StreamFactoryDiscovery;
 
 $options = [
     CURLOPT_CONNECTTIMEOUT => 10, // The number of seconds to wait while trying to connect. 
     CURLOPT_SSL_VERIFYPEER => false // Stop cURL from verifying the peer's certificate
 ];
-$client = new Client(new GuzzleMessageFactory(), new GuzzleStreamFactory(), $options);
+$client = new Client(MessageFactoryDiscovery::find(), StreamFactoryDiscovery::find(), $options);
 ```
 
 These options can not ne used:
