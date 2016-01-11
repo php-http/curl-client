@@ -18,8 +18,8 @@
     },
     "require-dev": {
         "guzzlehttp/psr7": "^1.0",
-        "php-http/adapter-integration-tests": "dev-master#48e5c0ee7b19772ab00060498f91886268b945c4",
-        "php-http/discovery": "^0.4",
+        "php-http/adapter-integration-tests": "dev-master#a7fcf3e8b6d6f4f5172f15e3bf62a4ee17e8c877",
+        "php-http/discovery": "^0.5",
         "php-http/utils": "^0.2",
         "phpunit/phpunit": "^4.8@stable",
         "zendframework/zend-diactoros": "^1.0"
