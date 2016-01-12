@@ -3,6 +3,15 @@
 ## [Unreleased]
 
 
+## 0.6.0 - 2016-01-12
+
+### Changed
+
+- Root namespace changed from `Http\Curl` to `Http\Client\Curl`.
+- Main client class name renamed from `CurlHttpClient` to `Client`. 
+- Minimum required [php-http/discovery](https://packagist.org/packages/php-http/discovery)
+   version changed to 0.5. 
+
 
 ## 0.5.0 - 2015-12-18
 
