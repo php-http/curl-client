@@ -65,7 +65,7 @@ $options = [
 $client = new Client(MessageFactoryDiscovery::find(), StreamFactoryDiscovery::find(), $options);
 ```
 
-These options can not ne used:
+These options can not be used:
 
 * CURLOPT_CUSTOMREQUEST
 * CURLOPT_FOLLOWLOCATION
