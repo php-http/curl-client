@@ -21,6 +21,8 @@ matrix:
   include:
     - php: 5.5
       env: COMPOSER_FLAGS="--prefer-stable --prefer-lowest" COVERAGE=true PHPUNIT_FLAGS="--coverage-clover build/coverage.xml"
+  allow_failures:
+    - php: hhvm
 
 before_install:
   - travis_retry composer self-update
