@@ -1,7 +1,10 @@
 # Change Log
 
-## [Unreleased]
+## 0.7.0 - 2016-01-26
 
+### Changed
+
+- Migrate from `php-http/discovery` and `php-http/utils` to `php-http/message`.
 
 ## 0.6.0 - 2016-01-12
 
@@ -10,7 +13,7 @@
 - Root namespace changed from `Http\Curl` to `Http\Client\Curl`.
 - Main client class name renamed from `CurlHttpClient` to `Client`. 
 - Minimum required [php-http/discovery](https://packagist.org/packages/php-http/discovery)
-   version changed to 0.5. 
+  version changed to 0.5.
 
 
 ## 0.5.0 - 2015-12-18

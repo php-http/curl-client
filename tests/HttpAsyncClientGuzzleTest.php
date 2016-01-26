@@ -3,8 +3,8 @@ namespace Http\Client\Curl\Tests;
 
 use Http\Client\Curl\Client;
 use Http\Client\HttpClient;
-use Http\Client\Utils\MessageFactory\GuzzleMessageFactory;
-use Http\Client\Utils\StreamFactory\GuzzleStreamFactory;
+use Http\Message\MessageFactory\GuzzleMessageFactory;
+use Http\Message\StreamFactory\GuzzleStreamFactory;
 
 /**
  * Tests for Http\Curl\Client

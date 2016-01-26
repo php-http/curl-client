@@ -3,8 +3,8 @@ namespace Http\Client\Curl\Tests;
 
 use Http\Client\Curl\Client;
 use Http\Client\HttpClient;
-use Http\Client\Utils\MessageFactory\DiactorosMessageFactory;
-use Http\Client\Utils\StreamFactory\DiactorosStreamFactory;
+use Http\Message\MessageFactory\DiactorosMessageFactory;
+use Http\Message\StreamFactory\DiactorosStreamFactory;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
 

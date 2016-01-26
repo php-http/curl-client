@@ -1,4 +1,6 @@
+.puli/
 build/
 vendor/
 composer.lock
 phpunit.xml
+puli.json

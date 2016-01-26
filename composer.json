@@ -10,17 +10,18 @@
             "email": "m.krasilnikov@yandex.ru"
         }
     ],
+    "prefer-stable": true,
+    "minimum-stability": "dev",
     "require": {
         "php": ">=5.5",
         "ext-curl": "*",
-        "php-http/httplug": "^1.0.0-alpha3",
+        "php-http/httplug": "^1.0",
         "php-http/message-factory": "^1.0"
     },
     "require-dev": {
         "guzzlehttp/psr7": "^1.0",
-        "php-http/adapter-integration-tests": "dev-master#a7fcf3e8b6d6f4f5172f15e3bf62a4ee17e8c877",
-        "php-http/discovery": "^0.5",
-        "php-http/utils": "^0.2",
+        "php-http/adapter-integration-tests": "0.3",
+        "php-http/message": "^0.2",
         "phpunit/phpunit": "^4.8@stable",
         "zendframework/zend-diactoros": "^1.0"
     },
@@ -40,7 +41,5 @@
     "scripts": {
         "test": "vendor/bin/phpunit",
         "test-ci": "vendor/bin/phpunit --coverage-clover build/coverage.xml"
-    },
-    "prefer-stable": true,
-    "minimum-stability": "dev"
+    }
 }

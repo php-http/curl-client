@@ -20,6 +20,20 @@ $ composer require php-http/curl-client
 
 ## Usage
 
+### Using [php-http/message](https://packagist.org/packages/php-http/message):
+
+```php
+use Http\Client\Curl\Client;
+use Http\Message\MessageFactory\DiactorosMessageFactory;
+use Http\Message\StreamFactory\DiactorosStreamFactory;
+
+$messageFactory = new DiactorosMessageFactory();
+$client = new Client($messageFactory, new DiactorosStreamFactory());
+
+$request = $messageFactory->createRequest('GET', 'http://example.com/');
+$response = $client->sendRequest($request);
+```
+
 ### Using [php-http/discovery](https://packagist.org/packages/php-http/discovery):
 
 ```php
@@ -30,20 +44,6 @@ use Http\Discovery\StreamFactoryDiscovery;
 $messageFactory = MessageFactoryDiscovery::find();
 $streamFactory = StreamFactoryDiscovery::find();
 $client = new Client($messageFactory, $streamFactory);
-
-$request = $messageFactory->createRequest('GET', 'http://example.com/');
-$response = $client->sendRequest($request);
-```
-
-### Using [mekras/httplug-diactoros-bridge](https://packagist.org/packages/mekras/httplug-diactoros-bridge):
-
-```php
-use Http\Client\Curl\Client;
-use Mekras\HttplugDiactorosBridge\DiactorosMessageFactory;
-use Mekras\HttplugDiactorosBridge\DiactorosStreamFactory;
-
-$messageFactory = new DiactorosMessageFactory();
-$client = new Client($messageFactory, new DiactorosStreamFactory());
 
 $request = $messageFactory->createRequest('GET', 'http://example.com/');
 $response = $client->sendRequest($request);

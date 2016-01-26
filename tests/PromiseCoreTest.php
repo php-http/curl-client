@@ -42,7 +42,7 @@ class PromiseCoreTest extends BaseUnitTestCase
                 return $response->withAddedHeader('X-Test', 'bar');
             }
         );
-        static::assertEquals('foo, bar', $core->getResponse()->getHeaderLine('X-Test'));
+        static::assertEquals('foo,bar', $core->getResponse()->getHeaderLine('X-Test'));
     }
 
     /**
