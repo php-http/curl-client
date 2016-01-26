@@ -8,6 +8,11 @@ use Http\Client\Tests\HttpClientTest;
  */
 abstract class HttpClientTestCase extends HttpClientTest
 {
+    public static function setUpBeforeClass()
+    {
+        //self::$logPath = PHPUnitUtility::getFile(true, 'php-http-adapter.log');
+    }
+
     /**
      * @dataProvider requestProvider
      * @group        integration
