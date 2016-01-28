@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.0.0 - 2016-01-28
+
+First stable release.
+
 ## 0.7.0 - 2016-01-26
 
 ### Changed

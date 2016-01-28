@@ -22,7 +22,7 @@
         "guzzlehttp/psr7": "^1.0",
         "php-http/adapter-integration-tests": "0.3",
         "php-http/message": "^0.2",
-        "phpunit/phpunit": "^4.8@stable",
+        "phpunit/phpunit": "^4.8",
         "zendframework/zend-diactoros": "^1.0"
     },
     "autoload": {
