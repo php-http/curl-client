@@ -18,72 +18,9 @@ Via Composer
 $ composer require php-http/curl-client
 ```
 
-## Usage
-
-### Using [php-http/message](https://packagist.org/packages/php-http/message):
-
-```php
-use Http\Client\Curl\Client;
-use Http\Message\MessageFactory\DiactorosMessageFactory;
-use Http\Message\StreamFactory\DiactorosStreamFactory;
-
-$messageFactory = new DiactorosMessageFactory();
-$client = new Client($messageFactory, new DiactorosStreamFactory());
-
-$request = $messageFactory->createRequest('GET', 'http://example.com/');
-$response = $client->sendRequest($request);
-```
-
-### Using [php-http/discovery](https://packagist.org/packages/php-http/discovery):
-
-```php
-use Http\Client\Curl\Client;
-use Http\Discovery\MessageFactoryDiscovery;
-use Http\Discovery\StreamFactoryDiscovery;
-
-$messageFactory = MessageFactoryDiscovery::find();
-$streamFactory = StreamFactoryDiscovery::find();
-$client = new Client($messageFactory, $streamFactory);
-
-$request = $messageFactory->createRequest('GET', 'http://example.com/');
-$response = $client->sendRequest($request);
-```
-
-### Configuring client
-
-You can use [cURL options](http://php.net/curl_setopt) to configure Client:
-
-```php
-use Http\Client\Curl\Client;
-use Http\Discovery\MessageFactoryDiscovery;
-use Http\Discovery\StreamFactoryDiscovery;
-
-$options = [
-    CURLOPT_CONNECTTIMEOUT => 10, // The number of seconds to wait while trying to connect. 
-    CURLOPT_SSL_VERIFYPEER => false // Stop cURL from verifying the peer's certificate
-];
-$client = new Client(MessageFactoryDiscovery::find(), StreamFactoryDiscovery::find(), $options);
-```
-
-These options can not be used:
-
-* CURLOPT_CUSTOMREQUEST
-* CURLOPT_FOLLOWLOCATION
-* CURLOPT_HEADER
-* CURLOPT_HTTP_VERSION
-* CURLOPT_HTTPHEADER
-* CURLOPT_NOBODY
-* CURLOPT_POSTFIELDS
-* CURLOPT_RETURNTRANSFER
-* CURLOPT_URL
-
-These options can be overwritten by Client:
-
-* CURLOPT_USERPWD
-
 ## Documentation
 
-Please see the [official documentation](http://php-http.readthedocs.org/en/latest/).
+Please see the [official documentation](http://docs.php-http.org/en/latest/clients/curl-client.html).
 
 ## Testing
 
