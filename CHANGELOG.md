@@ -1,8 +1,16 @@
 # Change Log
 
+## 1.1.0 - 2016-01-29
+
+### Changed
+
+- Switch to php-http/message 1.0.
+
+
 ## 1.0.0 - 2016-01-28
 
 First stable release.
+
 
 ## 0.7.0 - 2016-01-26
 
