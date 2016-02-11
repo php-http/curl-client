@@ -9,7 +9,7 @@ use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
 
 /**
- * Tests for Http\Curl\Client
+ * Tests for Http\Client\Curl\Client
  */
 class HttpClientDiactorosTest extends HttpClientTestCase
 {

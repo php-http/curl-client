@@ -7,7 +7,7 @@ use Http\Message\MessageFactory\GuzzleMessageFactory;
 use Http\Message\StreamFactory\GuzzleStreamFactory;
 
 /**
- * Tests for Http\Curl\Client
+ * Tests for Http\Client\Curl\Client
  */
 class HttpClientGuzzleTest extends HttpClientTestCase
 {

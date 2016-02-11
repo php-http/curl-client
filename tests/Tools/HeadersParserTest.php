@@ -5,7 +5,7 @@ use Http\Client\Curl\Tools\HeadersParser;
 use Http\Discovery\MessageFactoryDiscovery;
 
 /**
- * @covers Http\Curl\Tools\HeadersParser
+ * @covers Http\Client\Curl\Tools\HeadersParser
  */
 class HeadersParserTest extends \PHPUnit_Framework_TestCase
 {

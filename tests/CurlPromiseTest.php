@@ -7,9 +7,9 @@ use Http\Client\Exception\TransferException;
 use Http\Promise\Promise;
 
 /**
- * Tests for Http\Curl\CurlPromise
+ * Tests for Http\Client\Curl\CurlPromise
  *
- * @covers Http\Curl\CurlPromise
+ * @covers Http\Client\Curl\CurlPromise
  */
 class CurlPromiseTest extends BaseUnitTestCase
 {
