@@ -1,7 +1,7 @@
 <?php
 namespace Http\Client\Curl;
 
-use Http\Client\Curl\Tools\HeadersParser;
+use Http\Message\Builder\ResponseBuilder;
 use Http\Message\MessageFactory;
 use Http\Message\StreamFactory;
 use Psr\Http\Message\ResponseInterface;
@@ -50,6 +50,7 @@ class ResponseParser
      * @return ResponseInterface
      *
      * @throws \InvalidArgumentException
+     * @throws \UnexpectedValueException
      * @throws \RuntimeException
      */
     public function parse($raw, array $info)
@@ -59,8 +60,9 @@ class ResponseParser
         $headerSize = $info['header_size'];
         $rawHeaders = substr($raw, 0, $headerSize);
 
-        $parser = new HeadersParser();
-        $response = $parser->parseString($rawHeaders, $response);
+        $builder = new ResponseBuilder($response);
+        $builder->setHeadersFromString($rawHeaders);
+        $response = $builder->getResponse();
 
         /*
          * substr can return boolean value for empty string. But createStream does not support

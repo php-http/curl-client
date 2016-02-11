@@ -1,5 +1,12 @@
 # Change Log
 
+## Unreleased
+
+### Removed
+
+- #13: Remove HeaderParser. 
+
+
 ## 1.1.0 - 2016-01-29
 
 ### Changed
