@@ -8,9 +8,9 @@ use Http\Promise\Promise;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Tests for Http\Curl\PromiseCore
+ * Tests for Http\Client\Curl\PromiseCore
  *
- * @covers Http\Curl\PromiseCore
+ * @covers Http\Client\Curl\PromiseCore
  */
 class PromiseCoreTest extends BaseUnitTestCase
 {
