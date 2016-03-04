@@ -1,0 +1,11 @@
+{
+    "version": "1.0",
+    "name": "php-http/curl-client",
+    "bindings": {
+        "24f64c93-d14c-45f0-b720-d8e7c8e986d9": {
+            "_class": "Puli\\Discovery\\Binding\\ClassBinding",
+            "class": "Http\\Client\\Curl\\Client",
+            "type": "Http\\Client\\HttpClient"
+        }
+    }
+}
