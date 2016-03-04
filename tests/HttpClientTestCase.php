@@ -2,12 +2,21 @@
 namespace Http\Client\Curl\Tests;
 
 use Http\Client\Tests\HttpClientTest;
+use Http\Client\Tests\PHPUnitUtility;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * Base class for client integration tests
  */
 abstract class HttpClientTestCase extends HttpClientTest
 {
+    /**
+     * Temporary file name created by test.
+     *
+     * @var string[]
+     */
+    protected $tmpFiles = [];
+
     /**
      * @dataProvider requestProvider
      * @group        integration
@@ -50,5 +59,69 @@ abstract class HttpClientTestCase extends HttpClientTest
             $headers,
             $body
         );
+    }
+
+    /**
+     * Test sending large files.
+     */
+    public function testSendLargeFile()
+    {
+        $filename = $this->createTempFile();
+        $fd = fopen($filename, 'a');
+        $buffer = str_repeat('x', 1024);
+        for ($i = 0; $i < 2048; $i++) {
+            fwrite($fd, $buffer);
+        }
+        fclose($fd);
+        $body = $this->createFileStream($filename);
+
+        $request = self::$messageFactory->createRequest(
+            'POST',
+            PHPUnitUtility::getUri(),
+            [],
+            $body
+        );
+
+        $response = $this->httpAdapter->sendRequest($request);
+        $this->assertResponse(
+            $response,
+            [
+                'body' => 'Ok',
+            ]
+        );
+    }
+
+    /**
+     * Create temp file.
+     *
+     * @return string Filename
+     */
+    protected function createTempFile()
+    {
+        $filename = tempnam(sys_get_temp_dir(), 'tests');
+        $this->tmpFiles[] = $filename;
+
+        return $filename;
+    }
+
+    /**
+     * Create stream from file
+     *
+     * @param string $filename
+     *
+     * @return StreamInterface
+     */
+    abstract protected function createFileStream($filename);
+
+    /**
+     * Tears down the fixture
+     */
+    protected function tearDown()
+    {
+        parent::tearDown();
+
+        foreach ($this->tmpFiles as $filename) {
+            @unlink($filename);
+        }
     }
 }
