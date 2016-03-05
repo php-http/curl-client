@@ -165,39 +165,73 @@ class Client implements HttpClient, HttpAsyncClient
      * @return array
      */
     private function createCurlOptions(RequestInterface $request)
-    {
-        $options = $this->options;
+	{
+		// Invalid overwrite Curl options.
+		$options = array_diff_key($this->options, array_flip([
+			CURLOPT_HTTPGET,
+			CURLOPT_POST,
+			CURLOPT_UPLOAD,
+			CURLOPT_CUSTOMREQUEST,
+			CURLOPT_HTTPHEADER,
+			CURLOPT_INFILE,
+			CURLOPT_INFILESIZE
+		]));
 
-        $options[CURLOPT_HEADER] = true;
-        $options[CURLOPT_RETURNTRANSFER] = true;
-        $options[CURLOPT_FOLLOWLOCATION] = false;
+		$options[CURLOPT_HEADER] = true;
+		$options[CURLOPT_RETURNTRANSFER] = true;
+		$options[CURLOPT_FOLLOWLOCATION] = false;
+		$options[CURLOPT_HTTP_VERSION] = $this->getProtocolVersion($request->getProtocolVersion());
+		$options[CURLOPT_URL] = (string) $request->getUri();
 
-        $options[CURLOPT_HTTP_VERSION] = $this->getProtocolVersion($request->getProtocolVersion());
-        $options[CURLOPT_URL] = (string) $request->getUri();
+		// These methods do not transfer body.
+		// You can specify any method you'd like, including a custom method that might not be part of RFC 7231 (like "MOVE").
+		if (in_array($request->getMethod(), ['GET', 'HEAD', 'TRACE', 'CONNECT'])) {
+			// Make cancellation CURLOPT_WRITEFUNCTION, CURLOPT_READFUNCTION ? I have not tested.
+			if ($request->getMethod() == 'HEAD') {
+				$options[CURLOPT_NOBODY] = true;
+			}
+		} else { // Allow custom methods with body transfer (PUT, PROPFIND and other.)
+			$body = clone $request->getBody();
+			$size = $body->getSize();
 
-        if (in_array($request->getMethod(), ['OPTIONS', 'POST', 'PUT'], true)) {
-            // cURL allows request body only for these methods.
-            $body = (string) $request->getBody();
-            if ('' !== $body) {
-                $options[CURLOPT_POSTFIELDS] = $body;
-            }
-        }
+			// Send the body if the size is more than 1MB OR if the.
+			// The file to PUT must be set with CURLOPT_INFILE and CURLOPT_INFILESIZE.
+			if ($size === null || $size > 1024 * 1024) {
+				$options[CURLOPT_UPLOAD] = true;
 
-        if ($request->getMethod() === 'HEAD') {
-            $options[CURLOPT_NOBODY] = true;
-        } elseif ($request->getMethod() !== 'GET') {
-            // GET is a default method. Other methods should be specified explicitly.
-            $options[CURLOPT_CUSTOMREQUEST] = $request->getMethod();
-        }
+				// Note that using this option will not stop libcurl from sending more data,
+				// as exactly what is sent depends on CURLOPT_READFUNCTION.
+				if ($size !== null) {
+					$options[CURLOPT_INFILESIZE] = $size;
+				}
 
-        $options[CURLOPT_HTTPHEADER] = $this->createHeaders($request, $options);
+				$body->rewind();
 
-        if ($request->getUri()->getUserInfo()) {
-            $options[CURLOPT_USERPWD] = $request->getUri()->getUserInfo();
-        }
+				// Avoid full loading large or unknown size body into memory. Not replace CURLOPT_READFUNCTION.
+				$options[CURLOPT_INFILE] = $body->detach();
+			} else {
+				// Send the body as a string if the size is less than 1MB.
+				$options[CURLOPT_POSTFIELDS] = (string)$request->getBody();
+			}
+		}
 
-        return $options;
-    }
+		// GET is a default method. Other methods should be specified explicitly.
+		if ($request->getMethod() != 'GET') {
+			$options[CURLOPT_CUSTOMREQUEST] = $request->getMethod();
+		}
+
+		// For PUT and POST need Content-Length see RFC 7230 section 3.3.2
+		$options[CURLOPT_HTTPHEADER] = $this->createHeaders($request, $options);
+
+		if ($request->getUri()
+			->getUserInfo()
+		) {
+			$options[CURLOPT_USERPWD] = $request->getUri()
+				->getUserInfo();
+		}
+
+		return $options;
+	}
 
     /**
      * Return cURL constant for specified HTTP version
