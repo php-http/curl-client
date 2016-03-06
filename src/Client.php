@@ -18,6 +18,11 @@ use Psr\Http\Message\ResponseInterface;
  *
  * @author  Михаил Красильников <m.krasilnikov@yandex.ru>
  * @author  Blake Williams <github@shabbyrobe.org>
+ * 
+ * @TODO
+ * не работают фильтры потоков Http\Message\Encoding т.к. используют копию php://memory,
+ * что очень плохо потому что это приводит к неконтролируемому расходу памяти и это противоречит PSR-7.
+ * Лучшее решение это отказаться от clue и использовать stream_copy_to_stream($stream, fopen('php://temp', 'wb'))
  *
  * @api
  * @since   1.0
@@ -29,28 +34,28 @@ class Client implements HttpClient, HttpAsyncClient
      *
      * @var array
      */
-    private $options;
+    protected $options;
 
     /**
      * cURL response parser
      *
      * @var ResponseParser
      */
-    private $responseParser;
+    protected $responseParser;
 
     /**
      * cURL synchronous requests handle
      *
      * @var resource|null
      */
-    private $handle = null;
+    protected $handle = null;
 
     /**
      * Simultaneous requests runner
      *
      * @var MultiRunner|null
      */
-    private $multiRunner = null;
+    protected $multiRunner = null;
 
     /**
      * Create new client
@@ -164,7 +169,7 @@ class Client implements HttpClient, HttpAsyncClient
      *
      * @return array
      */
-    private function createCurlOptions(RequestInterface $request)
+    protected function createCurlOptions(RequestInterface $request)
 	{
 		// Invalid overwrite Curl options.
 		$options = array_diff_key($this->options, array_flip([
@@ -211,7 +216,7 @@ class Client implements HttpClient, HttpAsyncClient
 				$options[CURLOPT_INFILE] = $body->detach();
 			} else {
 				// Send the body as a string if the size is less than 1MB.
-				$options[CURLOPT_POSTFIELDS] = (string)$request->getBody();
+				$options[CURLOPT_POSTFIELDS] = (string) $request->getBody();
 			}
 		}
 
@@ -223,9 +228,7 @@ class Client implements HttpClient, HttpAsyncClient
 		// For PUT and POST need Content-Length see RFC 7230 section 3.3.2
 		$options[CURLOPT_HTTPHEADER] = $this->createHeaders($request, $options);
 
-		if ($request->getUri()
-			->getUserInfo()
-		) {
+		if ($request->getUri()->getUserInfo()) {
 			$options[CURLOPT_USERPWD] = $request->getUri()
 				->getUserInfo();
 		}
@@ -242,7 +245,7 @@ class Client implements HttpClient, HttpAsyncClient
      *
      * @return int
      */
-    private function getProtocolVersion($requestVersion)
+    protected function getProtocolVersion($requestVersion)
     {
         switch ($requestVersion) {
             case '1.0':
@@ -266,7 +269,7 @@ class Client implements HttpClient, HttpAsyncClient
      *
      * @return string[]
      */
-    private function createHeaders(RequestInterface $request, array $options)
+    protected function createHeaders(RequestInterface $request, array $options)
     {
         $curlHeaders = [];
         $headers = array_keys($request->getHeaders());
