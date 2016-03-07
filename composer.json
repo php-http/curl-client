@@ -11,7 +11,7 @@
         }
     ],
     "prefer-stable": true,
-    "minimum-stability": "dev",
+    "minimum-stability": "beta",
     "require": {
         "php": ">=5.5",
         "ext-curl": "*",
@@ -21,10 +21,10 @@
     "require-dev": {
         "guzzlehttp/psr7": "^1.0",
         "php-http/adapter-integration-tests": "dev-master#836cdff8294174cceeae54601ab4079c309227b7",
-        "php-http/message": "^1.0",
+        "php-http/message": "^1.0.2",
         "php-http/discovery": "~0.8.0",
         "phpunit/phpunit": "^4.8",
-        "puli/composer-plugin": "^1.0",
+        "puli/composer-plugin": "1.0.0-beta9",
         "zendframework/zend-diactoros": "^1.0"
     },
     "autoload": {
