@@ -123,6 +123,7 @@ class Client implements HttpClient, HttpAsyncClient
         } catch (\Exception $e) {
             throw new RequestException($e->getMessage(), $request, $e);
         }
+
         return $response;
     }
 
@@ -161,6 +162,7 @@ class Client implements HttpClient, HttpAsyncClient
      * @param RequestInterface $request
      *
      * @throws \UnexpectedValueException if unsupported HTTP version requested
+     * @throws \RuntimeException if can not read body
      *
      * @return array
      */
@@ -177,9 +179,23 @@ class Client implements HttpClient, HttpAsyncClient
 
         if (in_array($request->getMethod(), ['OPTIONS', 'POST', 'PUT'], true)) {
             // cURL allows request body only for these methods.
-            $body = (string) $request->getBody();
-            if ('' !== $body) {
-                $options[CURLOPT_POSTFIELDS] = $body;
+            $body = $request->getBody();
+            $bodySize = $body->getSize();
+            if ($bodySize !== 0) {
+                // Message has non empty body.
+                if (null === $bodySize || $bodySize > 1024 * 1024) {
+                    // Avoid full loading large or unknown size body into memory
+                    $options[CURLOPT_UPLOAD] = true;
+                    if (null !== $bodySize) {
+                        $options[CURLOPT_INFILESIZE] = $bodySize;
+                    }
+                    $options[CURLOPT_READFUNCTION] = function ($ch, $fd, $length) use ($body) {
+                        return $body->read($length);
+                    };
+                } else {
+                    // Small body can be loaded into memory
+                    $options[CURLOPT_POSTFIELDS] = (string) $body;
+                }
             }
         }
 
@@ -221,6 +237,7 @@ class Client implements HttpClient, HttpAsyncClient
                 }
                 throw new \UnexpectedValueException('libcurl 7.33 needed for HTTP 2.0 support');
         }
+
         return CURL_HTTP_VERSION_NONE;
     }
 
@@ -249,6 +266,7 @@ class Client implements HttpClient, HttpAsyncClient
                 $curlHeaders[] = $name . ': ' . $value;
             }
         }
+
         return $curlHeaders;
     }
 }
