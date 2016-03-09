@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Added
+
+- #16: Make sure discovery can find the curl client
+
 ### Fixed
 
 - #15: "Out of memory" sending large files.
