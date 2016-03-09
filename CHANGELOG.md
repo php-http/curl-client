@@ -1,5 +1,12 @@
 # Change Log
 
+## Unreleased
+
+### Fixed
+
+- #15: "Out of memory" sending large files.
+
+
 ## 1.1.0 - 2016-01-29
 
 ### Changed
