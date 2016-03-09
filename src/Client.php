@@ -254,7 +254,12 @@ class Client implements HttpClient, HttpAsyncClient
         $curlHeaders = [];
         $headers = array_keys($request->getHeaders());
         foreach ($headers as $name) {
-            if (strtolower($name) === 'content-length') {
+            $header = strtolower($name);
+            if ('expect' === $header) {
+                // curl-client does not support "Expect-Continue", so dropping "expect" headers
+                continue;
+            }
+            if ('content-length' === $header) {
                 $values = [0];
                 if (array_key_exists(CURLOPT_POSTFIELDS, $options)) {
                     $values = [strlen($options[CURLOPT_POSTFIELDS])];
@@ -266,6 +271,11 @@ class Client implements HttpClient, HttpAsyncClient
                 $curlHeaders[] = $name . ': ' . $value;
             }
         }
+        /*
+         * curl-client does not support "Expect-Continue", but cURL adds "Expect" header by default.
+         * We can not suppress it, but we can set it to empty.
+         */
+        $curlHeaders []= 'Expect:';
 
         return $curlHeaders;
     }
