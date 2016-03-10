@@ -124,6 +124,8 @@ class ResponseParser
         $response = $parser->parseArray($this->headers, $response);
         $response = $response->withBody($this->streamFactory->createStream($raw));
 
+        $this->temporaryStream = null;
+
         return $response;
     }
 
