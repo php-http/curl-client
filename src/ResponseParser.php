@@ -13,6 +13,7 @@ use Psr\Http\Message\ResponseInterface;
  * @license http://opensource.org/licenses/MIT MIT
  *
  * @author  Михаил Красильников <m.krasilnikov@yandex.ru>
+ * @author  Dmitry Arhitector   <dmitry.arhitector@yandex.ru>
 */
 class ResponseParser
 {
@@ -39,7 +40,7 @@ class ResponseParser
     protected $streamFactory;
 
     /**
-     *
+     * Temporary resource
      *
      * @var resource
      */
@@ -120,8 +121,7 @@ class ResponseParser
 
         $parser = new HeadersParser();
 
-        $response = $this->messageFactory->createResponse();
-        $response = $parser->parseArray($this->headers, $response);
+        $response = $parser->parseArray($this->headers, $this->messageFactory->createResponse());
         $response = $response->withBody($this->streamFactory->createStream($raw));
 
         $this->temporaryStream = null;
@@ -129,6 +129,14 @@ class ResponseParser
         return $response;
     }
 
+    /**
+     * Save the response headers
+     * 
+     * @param   resource    $handler    curl handler
+     * @param   string      $header     raw header
+     * 
+     * @return integer
+     */
     public function headerHandler($handler, $header)
     {
         $this->headers[] = $header;
@@ -138,7 +146,7 @@ class ResponseParser
             $this->headers = [$header];
         } else if ( ! trim($header)) {
             $this->followLocation = true;
-            //$this->parse();
+            //$this->parse(null, []);
         }
 
         return strlen($header);
