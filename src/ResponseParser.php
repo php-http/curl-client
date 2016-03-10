@@ -1,4 +1,5 @@
 <?php
+
 namespace Http\Client\Curl;
 
 use Http\Client\Curl\Tools\HeadersParser;
@@ -15,19 +16,42 @@ use Psr\Http\Message\ResponseInterface;
 */
 class ResponseParser
 {
+
+    /**
+     * Raw response headers
+     *
+     * @var array
+     */
+    protected $headers = [];
+
     /**
      * PSR-7 message factory
      *
      * @var MessageFactory
      */
-    private $messageFactory;
+    protected $messageFactory;
 
     /**
      * PSR-7 stream factory
      *
      * @var StreamFactory
      */
-    private $streamFactory;
+    protected $streamFactory;
+
+    /**
+     *
+     *
+     * @var resource
+     */
+    protected $temporaryStream;
+
+    /**
+     * Receive redirect
+     *
+     * @var bool
+     */
+    protected $followLocation = false;
+
 
     /**
      * Create new parser.
@@ -42,34 +66,80 @@ class ResponseParser
     }
 
     /**
+     * Get factory
+     *
+     * @return MessageFactory
+     */
+    public function getMessageFactory()
+    {
+        return $this->messageFactory;
+    }
+
+    /**
+     * Get factory
+     *
+     * @return StreamFactory
+     */
+    public function getStreamFactory()
+    {
+        return $this->streamFactory;
+    }
+
+    /**
+     * Temporary body (fix out of memory)
+     *
+     * @return resource
+     */
+    public function getTemporaryStream()
+    {
+        if ( ! is_resource($this->temporaryStream))
+        {
+            $this->temporaryStream = fopen('php://temp', 'w+');
+        }
+
+        return $this->temporaryStream;
+    }
+
+    /**
      * Parse cURL response
      *
-     * @param string $raw  raw response
-     * @param array  $info cURL response info
+     * @param resource $raw  raw response
+     * @param array    $info cURL response info
      *
      * @return ResponseInterface
      *
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
-    public function parse($raw, array $info)
+    public function parse($raw = null, array $info)
     {
-        $response = $this->messageFactory->createResponse();
-
-        $headerSize = $info['header_size'];
-        $rawHeaders = substr($raw, 0, $headerSize);
+        if (empty($raw)) // fix promise out of memory
+        {
+            $raw = $this->getTemporaryStream();
+        }
 
         $parser = new HeadersParser();
-        $response = $parser->parseString($rawHeaders, $response);
 
-        /*
-         * substr can return boolean value for empty string. But createStream does not support
-         * booleans. Converting to string.
-         */
-        $content = (string) substr($raw, $headerSize);
-        $stream = $this->streamFactory->createStream($content);
-        $response = $response->withBody($stream);
+        $response = $this->messageFactory->createResponse();
+        $response = $parser->parseArray($this->headers, $response);
+        $response = $response->withBody($this->streamFactory->createStream($raw));
 
         return $response;
     }
+
+    public function headerHandler($handler, $header)
+    {
+        $this->headers[] = $header;
+
+        if ($this->followLocation) {
+            $this->followLocation = false;
+            $this->headers = [$header];
+        } else if ( ! trim($header)) {
+            $this->followLocation = true;
+            //$this->parse();
+        }
+
+        return strlen($header);
+    }
+
 }
