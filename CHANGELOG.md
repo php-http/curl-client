@@ -7,6 +7,17 @@
 - #13: Remove HeaderParser. 
 
 
+## 1.2 - 2016-03-09
+
+### Added
+
+- #16: Make sure discovery can find the curl client
+
+### Fixed
+
+- #15: "Out of memory" sending large files.
+
+
 ## 1.1.0 - 2016-01-29
 
 ### Changed
