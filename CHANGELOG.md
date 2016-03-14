@@ -1,6 +1,10 @@
 # Change Log
 
-## Unreleased
+## 1.3 - 2016-03-14
+
+### Fixed
+
+- #18: Invalid "Expect" header.
 
 ### Removed
 
