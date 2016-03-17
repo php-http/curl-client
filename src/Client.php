@@ -55,13 +55,6 @@ class Client implements HttpClient, HttpAsyncClient
     /**
      * Create new client
      *
-     * Available options:
-     *
-     * - connection_timeout : int —  connection timeout in seconds;
-     * - curl_options: array — custom cURL options;
-     * - ssl_verify_peer : bool — verify peer when using SSL;
-     * - timeout : int —  overall timeout in seconds.
-     *
      * @param MessageFactory $messageFactory HTTP Message factory
      * @param StreamFactory  $streamFactory  HTTP Stream factory
      * @param array          $options        cURL options (see http://php.net/curl_setopt)
