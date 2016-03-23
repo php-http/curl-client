@@ -87,8 +87,9 @@ class Client implements HttpClient, HttpAsyncClient
      *
      * @return ResponseInterface
      *
-     * @throws \UnexpectedValueException if unsupported HTTP version requested
      * @throws RequestException
+     * @throws \UnexpectedValueException if unsupported HTTP version requested
+     * @throws \RuntimeException if can not read body
      *
      * @since 1.0
      */
@@ -129,6 +130,7 @@ class Client implements HttpClient, HttpAsyncClient
      *
      * @throws Exception
      * @throws \UnexpectedValueException if unsupported HTTP version requested
+     * @throws \RuntimeException if can not read body
      *
      * @since 1.0
      */
@@ -268,7 +270,7 @@ class Client implements HttpClient, HttpAsyncClient
          * curl-client does not support "Expect-Continue", but cURL adds "Expect" header by default.
          * We can not suppress it, but we can set it to empty.
          */
-        $curlHeaders []= 'Expect:';
+        $curlHeaders[] = 'Expect:';
 
         return $curlHeaders;
     }
