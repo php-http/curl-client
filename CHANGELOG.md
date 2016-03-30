@@ -1,5 +1,12 @@
 # Change Log
 
+## 1.4 - 2016-03-30
+
+### Changed
+
+- #20: Minimize memory usage when reading large response body.
+
+
 ## 1.3 - 2016-03-14
 
 ### Fixed
