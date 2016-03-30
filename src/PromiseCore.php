@@ -30,6 +30,13 @@ class PromiseCore
     private $handle;
 
     /**
+     * Response builder
+     *
+     * @var ResponseBuilder
+     */
+    private $responseBuilder;
+
+    /**
      * Promise state
      *
      * @var string
@@ -58,25 +65,23 @@ class PromiseCore
     private $onRejected = [];
 
     /**
-     * Received response
-     *
-     * @var ResponseInterface|null
-     */
-    private $response = null;
-
-    /**
      * Create shared core.
      *
      * @param RequestInterface $request HTTP request
      * @param resource         $handle  cURL handle
+     * @param ResponseBuilder  $responseBuilder
      */
-    public function __construct(RequestInterface $request, $handle)
-    {
+    public function __construct(
+        RequestInterface $request,
+        $handle,
+        ResponseBuilder $responseBuilder
+    ) {
         assert('is_resource($handle)');
         assert('get_resource_type($handle) === "curl"');
 
         $this->request = $request;
         $this->handle = $handle;
+        $this->responseBuilder = $responseBuilder;
         $this->state = Promise::PENDING;
     }
 
@@ -90,7 +95,10 @@ class PromiseCore
         if ($this->getState() === Promise::PENDING) {
             $this->onFulfilled[] = $callback;
         } elseif ($this->getState() === Promise::FULFILLED) {
-            $this->response = call_user_func($callback, $this->response);
+            $response = call_user_func($callback, $this->responseBuilder->getResponse());
+            if ($response instanceof ResponseInterface) {
+                $this->responseBuilder->setResponse($response);
+            }
         }
     }
 
@@ -142,15 +150,10 @@ class PromiseCore
      * Return the value of the promise (fulfilled).
      *
      * @return ResponseInterface Response Object only when the Promise is fulfilled.
-     *
-     * @throws \LogicException When the promise is not fulfilled.
      */
     public function getResponse()
     {
-        if (null === $this->response) {
-            throw new \LogicException('Promise is not fulfilled');
-        }
-        return $this->response;
+        return $this->responseBuilder->getResponse();
     }
 
     /**
@@ -168,19 +171,24 @@ class PromiseCore
         if (null === $this->exception) {
             throw new \LogicException('Promise is not rejected');
         }
+
         return $this->exception;
     }
 
     /**
      * Fulfill promise.
      *
-     * @param ResponseInterface $response Received response
+     * @throws \Exception from on fulfill handler.
      */
-    public function fulfill(ResponseInterface $response)
+    public function fulfill()
     {
-        $this->response = $response;
         $this->state = Promise::FULFILLED;
-        $this->response = $this->call($this->onFulfilled, $this->response);
+        $response = $this->responseBuilder->getResponse();
+        $response->getBody()->seek(0);
+        $response = $this->call($this->onFulfilled, $response);
+        if ($response instanceof ResponseInterface) {
+            $this->responseBuilder->setResponse($response);
+        }
     }
 
     /**
@@ -214,6 +222,7 @@ class PromiseCore
             $callback = array_shift($callbacks);
             $argument = call_user_func($callback, $argument);
         }
+
         return $argument;
     }
 }

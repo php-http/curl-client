@@ -2,6 +2,7 @@
 namespace Http\Client\Curl\Tests;
 
 use Http\Client\Curl\PromiseCore;
+use Http\Client\Curl\ResponseBuilder;
 use Http\Client\Exception;
 use Http\Client\Exception\RequestException;
 use Http\Promise\Promise;
@@ -22,7 +23,11 @@ class PromiseCoreTest extends BaseUnitTestCase
         $request = $this->createRequest('GET', '/');
         $this->handle = curl_init();
 
-        $core = new PromiseCore($request, $this->handle);
+        $core = new PromiseCore(
+            $request,
+            $this->handle,
+            new ResponseBuilder($this->createResponse())
+        );
         static::assertSame($request, $core->getRequest());
         static::assertSame($this->handle, $core->getHandle());
 
@@ -32,7 +37,7 @@ class PromiseCoreTest extends BaseUnitTestCase
             }
         );
 
-        $core->fulfill($this->createResponse());
+        $core->fulfill();
         static::assertEquals(Promise::FULFILLED, $core->getState());
         static::assertInstanceOf(ResponseInterface::class, $core->getResponse());
         static::assertEquals('foo', $core->getResponse()->getHeaderLine('X-Test'));
@@ -53,7 +58,11 @@ class PromiseCoreTest extends BaseUnitTestCase
         $request = $this->createRequest('GET', '/');
         $this->handle = curl_init();
 
-        $core = new PromiseCore($request, $this->handle);
+        $core = new PromiseCore(
+            $request,
+            $this->handle,
+            new ResponseBuilder($this->createResponse())
+        );
         $core->addOnRejected(
             function (RequestException $exception) {
                 throw new RequestException('Foo', $exception->getRequest(), $exception);
@@ -77,23 +86,15 @@ class PromiseCoreTest extends BaseUnitTestCase
     /**
      * @expectedException \LogicException
      */
-    public function testNotFulfilled()
-    {
-        $request = $this->createRequest('GET', '/');
-        $this->handle = curl_init();
-        $core = new PromiseCore($request, $this->handle);
-        $core->getResponse();
-    }
-
-
-    /**
-     * @expectedException \LogicException
-     */
     public function testNotRejected()
     {
         $request = $this->createRequest('GET', '/');
         $this->handle = curl_init();
-        $core = new PromiseCore($request, $this->handle);
+        $core = new PromiseCore(
+            $request,
+            $this->handle,
+            new ResponseBuilder($this->createResponse())
+        );
         $core->getException();
     }
 }

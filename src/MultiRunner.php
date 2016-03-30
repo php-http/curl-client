@@ -20,28 +20,11 @@ class MultiRunner
     private $multiHandle = null;
 
     /**
-     * cURL response parser
-     *
-     * @var ResponseParser
-     */
-    private $responseParser;
-
-    /**
      * Awaiting cores
      *
      * @var PromiseCore[]
      */
     private $cores = [];
-
-    /**
-     * Construct new runner.
-     *
-     * @param ResponseParser $responseParser
-     */
-    public function __construct(ResponseParser $responseParser)
-    {
-        $this->responseParser = $responseParser;
-    }
 
     /**
      * Release resources if still active
@@ -111,11 +94,7 @@ class MultiRunner
 
                 if (CURLE_OK === $info['result']) {
                     try {
-                        $response = $this->responseParser->parse(
-                            curl_multi_getcontent($core->getHandle()),
-                            curl_getinfo($core->getHandle())
-                        );
-                        $core->fulfill($response);
+                        $core->fulfill();
                     } catch (\Exception $e) {
                         $core->reject(
                             new RequestException($e->getMessage(), $core->getRequest(), $e)

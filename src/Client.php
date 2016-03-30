@@ -32,11 +32,18 @@ class Client implements HttpClient, HttpAsyncClient
     private $options;
 
     /**
-     * cURL response parser
+     * PSR-7 message factory
      *
-     * @var ResponseParser
+     * @var MessageFactory
      */
-    private $responseParser;
+    private $messageFactory;
+
+    /**
+     * PSR-7 stream factory
+     *
+     * @var StreamFactory
+     */
+    private $streamFactory;
 
     /**
      * cURL synchronous requests handle
@@ -66,7 +73,8 @@ class Client implements HttpClient, HttpAsyncClient
         StreamFactory $streamFactory,
         array $options = []
     ) {
-        $this->responseParser = new ResponseParser($messageFactory, $streamFactory);
+        $this->messageFactory = $messageFactory;
+        $this->streamFactory = $streamFactory;
         $this->options = $options;
     }
 
@@ -87,15 +95,16 @@ class Client implements HttpClient, HttpAsyncClient
      *
      * @return ResponseInterface
      *
-     * @throws RequestException
+     * @throws \RuntimeException         If creating the body stream fails.
      * @throws \UnexpectedValueException if unsupported HTTP version requested
-     * @throws \RuntimeException if can not read body
+     * @throws RequestException
      *
      * @since 1.0
      */
     public function sendRequest(RequestInterface $request)
     {
-        $options = $this->createCurlOptions($request);
+        $responseBuilder = $this->createResponseBuilder();
+        $options = $this->createCurlOptions($request, $responseBuilder);
 
         if (is_resource($this->handle)) {
             curl_reset($this->handle);
@@ -104,19 +113,14 @@ class Client implements HttpClient, HttpAsyncClient
         }
 
         curl_setopt_array($this->handle, $options);
-        $raw = curl_exec($this->handle);
+        curl_exec($this->handle);
 
         if (curl_errno($this->handle) > 0) {
             throw new RequestException(curl_error($this->handle), $request);
         }
 
-        $info = curl_getinfo($this->handle);
-
-        try {
-            $response = $this->responseParser->parse($raw, $info);
-        } catch (\Exception $e) {
-            throw new RequestException($e->getMessage(), $request, $e);
-        }
+        $response = $responseBuilder->getResponse();
+        $response->getBody()->seek(0);
 
         return $response;
     }
@@ -128,23 +132,24 @@ class Client implements HttpClient, HttpAsyncClient
      *
      * @return Promise
      *
+     * @throws \RuntimeException         If creating the body stream fails.
+     * @throws \UnexpectedValueException If unsupported HTTP version requested
      * @throws Exception
-     * @throws \UnexpectedValueException if unsupported HTTP version requested
-     * @throws \RuntimeException if can not read body
      *
      * @since 1.0
      */
     public function sendAsyncRequest(RequestInterface $request)
     {
         if (!$this->multiRunner instanceof MultiRunner) {
-            $this->multiRunner = new MultiRunner($this->responseParser);
+            $this->multiRunner = new MultiRunner();
         }
 
         $handle = curl_init();
-        $options = $this->createCurlOptions($request);
+        $responseBuilder = $this->createResponseBuilder();
+        $options = $this->createCurlOptions($request, $responseBuilder);
         curl_setopt_array($handle, $options);
 
-        $core = new PromiseCore($request, $handle);
+        $core = new PromiseCore($request, $handle, $responseBuilder);
         $promise = new CurlPromise($core, $this->multiRunner);
         $this->multiRunner->add($core);
 
@@ -155,18 +160,19 @@ class Client implements HttpClient, HttpAsyncClient
      * Generates cURL options
      *
      * @param RequestInterface $request
+     * @param ResponseBuilder  $responseBuilder
      *
      * @throws \UnexpectedValueException if unsupported HTTP version requested
      * @throws \RuntimeException if can not read body
      *
      * @return array
      */
-    private function createCurlOptions(RequestInterface $request)
+    private function createCurlOptions(RequestInterface $request, ResponseBuilder $responseBuilder)
     {
         $options = $this->options;
 
-        $options[CURLOPT_HEADER] = true;
-        $options[CURLOPT_RETURNTRANSFER] = true;
+        $options[CURLOPT_HEADER] = false;
+        $options[CURLOPT_RETURNTRANSFER] = false;
         $options[CURLOPT_FOLLOWLOCATION] = false;
 
         $options[CURLOPT_HTTP_VERSION] = $this->getProtocolVersion($request->getProtocolVersion());
@@ -206,6 +212,23 @@ class Client implements HttpClient, HttpAsyncClient
         if ($request->getUri()->getUserInfo()) {
             $options[CURLOPT_USERPWD] = $request->getUri()->getUserInfo();
         }
+
+        $options[CURLOPT_HEADERFUNCTION] = function ($ch, $data) use ($responseBuilder) {
+            $str = trim($data);
+            if ('' !== $str) {
+                if (strpos(strtolower($str), 'http/') === 0) {
+                    $responseBuilder->setStatus($str)->getResponse();
+                } else {
+                    $responseBuilder->addHeader($str);
+                }
+            }
+
+            return strlen($data);
+        };
+
+        $options[CURLOPT_WRITEFUNCTION] = function ($ch, $data) use ($responseBuilder) {
+            return $responseBuilder->getResponse()->getBody()->write($data);
+        };
 
         return $options;
     }
@@ -273,5 +296,24 @@ class Client implements HttpClient, HttpAsyncClient
         $curlHeaders[] = 'Expect:';
 
         return $curlHeaders;
+    }
+
+    /**
+     * Create new ResponseBuilder instance
+     *
+     * @return ResponseBuilder
+     *
+     * @throws \RuntimeException If creating the stream from $body fails.
+     */
+    private function createResponseBuilder()
+    {
+        try {
+            $body = $this->streamFactory->createStream(fopen('php://temp', 'w+'));
+        } catch (\InvalidArgumentException $e) {
+            throw new \RuntimeException('Can not create "php://temp" stream.');
+        }
+        $response = $this->messageFactory->createResponse(200, null, [], $body);
+
+        return new ResponseBuilder($response);
     }
 }

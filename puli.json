@@ -37,6 +37,11 @@
             "installer": "composer",
             "env": "dev"
         },
+        "paragonie/random_compat": {
+            "install-path": "vendor/paragonie/random_compat",
+            "installer": "composer",
+            "env": "dev"
+        },
         "php-http/adapter-integration-tests": {
             "install-path": "vendor/php-http/adapter-integration-tests",
             "installer": "composer",

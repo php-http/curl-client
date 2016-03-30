@@ -98,7 +98,7 @@ class CurlPromise implements Promise
         $this->runner->wait($this->core);
 
         if ($unwrap) {
-            if ($this->core->getState() == self::REJECTED) {
+            if ($this->core->getState() === self::REJECTED) {
                 throw $this->core->getException();
             }
 
