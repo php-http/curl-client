@@ -5,6 +5,8 @@ use Http\Client\Exception;
 use Http\Client\Exception\RequestException;
 use Http\Client\HttpAsyncClient;
 use Http\Client\HttpClient;
+use Http\Discovery\MessageFactoryDiscovery;
+use Http\Discovery\StreamFactoryDiscovery;
 use Http\Message\MessageFactory;
 use Http\Message\StreamFactory;
 use Http\Promise\Promise;
@@ -24,6 +26,11 @@ use Psr\Http\Message\ResponseInterface;
  */
 class Client implements HttpClient, HttpAsyncClient
 {
+    /**
+     * @access private
+     */
+    const DEPENDENCY_MSG = 'You should either provide $%s argument or install "php-http/discovery"';
+
     /**
      * cURL options
      *
@@ -62,19 +69,35 @@ class Client implements HttpClient, HttpAsyncClient
     /**
      * Create new client
      *
-     * @param MessageFactory $messageFactory HTTP Message factory
-     * @param StreamFactory  $streamFactory  HTTP Stream factory
-     * @param array          $options        cURL options (see http://php.net/curl_setopt)
+     * @param MessageFactory|null $messageFactory HTTP Message factory
+     * @param StreamFactory|null  $streamFactory  HTTP Stream factory
+     * @param array               $options        cURL options (see http://php.net/curl_setopt)
+     *
+     * @throws \LogicException If some factory not provided and php-http/discovery not installed
      *
      * @since 1.0
      */
     public function __construct(
-        MessageFactory $messageFactory,
-        StreamFactory $streamFactory,
+        MessageFactory $messageFactory = null,
+        StreamFactory $streamFactory = null,
         array $options = []
     ) {
+        if (null === $messageFactory) {
+            if (!class_exists(MessageFactoryDiscovery::class)) {
+                throw new \LogicException(sprintf(self::DEPENDENCY_MSG, 'messageFactory'));
+            }
+            $messageFactory = MessageFactoryDiscovery::find();
+        }
         $this->messageFactory = $messageFactory;
+
+        if (null === $streamFactory) {
+            if (!class_exists(StreamFactoryDiscovery::class)) {
+                throw new \LogicException(sprintf(self::DEPENDENCY_MSG, 'streamFactory'));
+            }
+            $streamFactory = StreamFactoryDiscovery::find();
+        }
         $this->streamFactory = $streamFactory;
+
         $this->options = $options;
     }
 

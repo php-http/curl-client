@@ -188,6 +188,11 @@
             "installer": "composer",
             "env": "dev"
         },
+        "symfony/filesystem": {
+            "install-path": "vendor/symfony/filesystem",
+            "installer": "composer",
+            "env": "dev"
+        },
         "symfony/process": {
             "install-path": "vendor/symfony/process",
             "installer": "composer",

@@ -30,4 +30,14 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
         static::assertContains('Expect:', $headers);
     }
+
+    /**
+     * Discovery should be used if no factory given.
+     */
+    public function testFactoryDiscovery()
+    {
+        $client = new Client;
+
+        static::assertInstanceOf(Client::class, $client);
+    }
 }
