@@ -1,5 +1,12 @@
 # Change Log
 
+## 1.4.1 - 2016-05-30
+
+### Fixed
+
+- #22: Cannot create the client using `HttpClientDiscovery`.
+
+
 ## 1.4 - 2016-03-30
 
 ### Changed
