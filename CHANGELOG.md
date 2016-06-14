@@ -1,5 +1,12 @@
 # Change Log
 
+## 1.4.2 - 2016-06-14
+
+### Added
+
+- #23: "php-http/async-client-implementation" added to "provide" section.
+
+
 ## 1.4.1 - 2016-05-30
 
 ### Fixed
