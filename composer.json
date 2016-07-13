@@ -13,10 +13,11 @@
     "prefer-stable": true,
     "minimum-stability": "beta",
     "require": {
-        "php": ">=5.5",
+        "php": "^5.5|^7.0",
         "ext-curl": "*",
         "php-http/httplug": "^1.0",
-        "php-http/message-factory": "^1.0"
+        "php-http/message-factory": "^1.0",
+        "php-http/message": "^1.2"
     },
     "suggest": {
         "php-http/discovery": "Allow automatically discover needed HTTPlug implementations"
@@ -24,10 +25,8 @@
     "require-dev": {
         "guzzlehttp/psr7": "^1.0",
         "php-http/adapter-integration-tests": "0.4.*",
-        "php-http/message": "^1.2",
-        "php-http/discovery": "~0.8.0",
+        "php-http/discovery": "^0.9",
         "phpunit/phpunit": "^4.8",
-        "puli/composer-plugin": "^1.0@beta,>=1.0.0-beta9",
         "zendframework/zend-diactoros": "^1.0"
     },
     "autoload": {
