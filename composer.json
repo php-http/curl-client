@@ -13,7 +13,7 @@
     "prefer-stable": true,
     "minimum-stability": "beta",
     "require": {
-        "php": "^5.5|^7.0",
+        "php": "^5.5 || ^7.0",
         "ext-curl": "*",
         "php-http/httplug": "^1.0",
         "php-http/message-factory": "^1.0",
@@ -24,7 +24,7 @@
     },
     "require-dev": {
         "guzzlehttp/psr7": "^1.0",
-        "php-http/adapter-integration-tests": "^0.4",
+        "php-http/client-integration-tests": "^0.5",
         "php-http/discovery": "^1.0",
         "phpunit/phpunit": "^4.8",
         "zendframework/zend-diactoros": "^1.0"
