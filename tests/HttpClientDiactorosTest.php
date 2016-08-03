@@ -6,8 +6,6 @@ use Http\Client\HttpClient;
 use Http\Message\MessageFactory\DiactorosMessageFactory;
 use Http\Message\StreamFactory\DiactorosStreamFactory;
 use Psr\Http\Message\StreamInterface;
-use Zend\Diactoros\Request;
-use Zend\Diactoros\Response;
 use Zend\Diactoros\Stream;
 
 /**
