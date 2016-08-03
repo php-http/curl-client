@@ -202,8 +202,15 @@ class Client implements HttpClient, HttpAsyncClient
         $options[CURLOPT_HTTP_VERSION] = $this->getProtocolVersion($request->getProtocolVersion());
         $options[CURLOPT_URL] = (string) $request->getUri();
 
-        if (in_array($request->getMethod(), ['OPTIONS', 'POST', 'PUT'], true)) {
-            // cURL allows request body only for these methods.
+        /*
+         * Add body to request. Some HTTP methods can not have payload:
+         *
+         * - GET — cURL will automatically change method to PUT or POST if we set CURLOPT_UPLOAD or
+         *   CURLOPT_POSTFIELDS.
+         * - HEAD — cURL treats HEAD as GET request with a same restrictions.
+         * - TRACE — According to RFC7231: a client MUST NOT send a message body in a TRACE request.
+         */
+        if (!in_array($request->getMethod(), ['GET', 'HEAD', 'TRACE'], true)) {
             $body = $request->getBody();
             $bodySize = $body->getSize();
             if ($bodySize !== 0) {
@@ -225,6 +232,7 @@ class Client implements HttpClient, HttpAsyncClient
         }
 
         if ($request->getMethod() === 'HEAD') {
+            // This will set HTTP method to "HEAD".
             $options[CURLOPT_NOBODY] = true;
         } elseif ($request->getMethod() !== 'GET') {
             // GET is a default method. Other methods should be specified explicitly.

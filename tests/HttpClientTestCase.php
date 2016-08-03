@@ -26,7 +26,7 @@ abstract class HttpClientTestCase extends HttpClientTest
         if (defined('HHVM_VERSION')) {
             static::markTestSkipped('This test can not run under HHVM');
         }
-        if (null !== $body && !in_array($method, ['OPTIONS', 'POST', 'PUT'], true)) {
+        if (null !== $body && in_array($method, ['GET', 'HEAD', 'TRACE'], true)) {
             static::markTestSkipped('cURL can not send body using ' . $method);
         }
         parent::testSendRequest(
