@@ -74,6 +74,7 @@ class Client implements HttpClient, HttpAsyncClient
      * @param array               $options        cURL options (see http://php.net/curl_setopt)
      *
      * @throws \LogicException If some factory not provided and php-http/discovery not installed
+     * @throws \Http\Discovery\Exception\NotFoundException If factory discovery failed.
      *
      * @since 1.0
      */
