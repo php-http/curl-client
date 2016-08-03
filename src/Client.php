@@ -7,7 +7,7 @@ use Http\Client\HttpAsyncClient;
 use Http\Client\HttpClient;
 use Http\Discovery\MessageFactoryDiscovery;
 use Http\Discovery\StreamFactoryDiscovery;
-use Http\Message\MessageFactory;
+use Http\Message\ResponseFactory;
 use Http\Message\StreamFactory;
 use Http\Promise\Promise;
 use Psr\Http\Message\RequestInterface;
@@ -39,11 +39,11 @@ class Client implements HttpClient, HttpAsyncClient
     private $options;
 
     /**
-     * PSR-7 message factory
+     * PSR-7 response factory
      *
-     * @var MessageFactory
+     * @var ResponseFactory
      */
-    private $messageFactory;
+    private $responseFactory;
 
     /**
      * PSR-7 stream factory
@@ -69,9 +69,9 @@ class Client implements HttpClient, HttpAsyncClient
     /**
      * Create new client
      *
-     * @param MessageFactory|null $messageFactory HTTP Message factory
-     * @param StreamFactory|null  $streamFactory  HTTP Stream factory
-     * @param array               $options        cURL options (see http://php.net/curl_setopt)
+     * @param ResponseFactory|null $responseFactory HTTP Response factory
+     * @param StreamFactory|null   $streamFactory  HTTP Stream factory
+     * @param array                $options        cURL options (see http://php.net/curl_setopt)
      *
      * @throws \LogicException If some factory not provided and php-http/discovery not installed
      * @throws \Http\Discovery\Exception\NotFoundException If factory discovery failed.
@@ -79,25 +79,12 @@ class Client implements HttpClient, HttpAsyncClient
      * @since 1.0
      */
     public function __construct(
-        MessageFactory $messageFactory = null,
+        ResponseFactory $responseFactory = null,
         StreamFactory $streamFactory = null,
         array $options = []
     ) {
-        if (null === $messageFactory) {
-            if (!class_exists(MessageFactoryDiscovery::class)) {
-                throw new \LogicException(sprintf(self::DEPENDENCY_MSG, 'messageFactory'));
-            }
-            $messageFactory = MessageFactoryDiscovery::find();
-        }
-        $this->messageFactory = $messageFactory;
-
-        if (null === $streamFactory) {
-            if (!class_exists(StreamFactoryDiscovery::class)) {
-                throw new \LogicException(sprintf(self::DEPENDENCY_MSG, 'streamFactory'));
-            }
-            $streamFactory = StreamFactoryDiscovery::find();
-        }
-        $this->streamFactory = $streamFactory;
+        $this->responseFactory = $responseFactory ?: MessageFactoryDiscovery::find();
+        $this->streamFactory = $streamFactory ?: StreamFactoryDiscovery::find();
 
         $this->options = $options;
     }
@@ -344,7 +331,7 @@ class Client implements HttpClient, HttpAsyncClient
         } catch (\InvalidArgumentException $e) {
             throw new \RuntimeException('Can not create "php://temp" stream.');
         }
-        $response = $this->messageFactory->createResponse(200, null, [], $body);
+        $response = $this->responseFactory->createResponse(200, null, [], $body);
 
         return new ResponseBuilder($response);
     }
