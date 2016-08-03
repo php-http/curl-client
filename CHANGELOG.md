@@ -5,6 +5,7 @@
 ### Changed
 
 - Request body can be send with any method except GET, HEAD and TRACE.
+- #25: Make discovery a hard dependency. 
 
 ## 1.4.2 - 2016-06-14
 
