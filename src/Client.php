@@ -99,6 +99,7 @@ class Client implements HttpClient, HttpAsyncClient
      *
      * @return ResponseInterface
      *
+     * @throws \InvalidArgumentException For invalid header names or values.
      * @throws \RuntimeException         If creating the body stream fails.
      * @throws \UnexpectedValueException if unsupported HTTP version requested
      * @throws RequestException
@@ -136,6 +137,7 @@ class Client implements HttpClient, HttpAsyncClient
      *
      * @return Promise
      *
+     * @throws \InvalidArgumentException For invalid header names or values.
      * @throws \RuntimeException         If creating the body stream fails.
      * @throws \UnexpectedValueException If unsupported HTTP version requested
      * @throws Exception
@@ -166,8 +168,9 @@ class Client implements HttpClient, HttpAsyncClient
      * @param RequestInterface $request
      * @param ResponseBuilder  $responseBuilder
      *
-     * @throws \UnexpectedValueException if unsupported HTTP version requested
+     * @throws \InvalidArgumentException For invalid header names or values.
      * @throws \RuntimeException if can not read body
+     * @throws \UnexpectedValueException if unsupported HTTP version requested
      *
      * @return array
      */
