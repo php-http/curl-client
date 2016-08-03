@@ -27,11 +27,6 @@ use Psr\Http\Message\ResponseInterface;
 class Client implements HttpClient, HttpAsyncClient
 {
     /**
-     * @access private
-     */
-    const DEPENDENCY_MSG = 'You should either provide $%s argument or install "php-http/discovery"';
-
-    /**
      * cURL options
      *
      * @var array
@@ -73,7 +68,6 @@ class Client implements HttpClient, HttpAsyncClient
      * @param StreamFactory|null  $streamFactory  HTTP Stream factory
      * @param array               $options        cURL options (see http://php.net/curl_setopt)
      *
-     * @throws \LogicException If some factory not provided and php-http/discovery not installed
      * @throws \Http\Discovery\Exception\NotFoundException If factory discovery failed.
      *
      * @since 1.0
@@ -83,22 +77,8 @@ class Client implements HttpClient, HttpAsyncClient
         StreamFactory $streamFactory = null,
         array $options = []
     ) {
-        if (null === $messageFactory) {
-            if (!class_exists(MessageFactoryDiscovery::class)) {
-                throw new \LogicException(sprintf(self::DEPENDENCY_MSG, 'messageFactory'));
-            }
-            $messageFactory = MessageFactoryDiscovery::find();
-        }
-        $this->messageFactory = $messageFactory;
-
-        if (null === $streamFactory) {
-            if (!class_exists(StreamFactoryDiscovery::class)) {
-                throw new \LogicException(sprintf(self::DEPENDENCY_MSG, 'streamFactory'));
-            }
-            $streamFactory = StreamFactoryDiscovery::find();
-        }
-        $this->streamFactory = $streamFactory;
-
+        $this->messageFactory = $messageFactory ?: MessageFactoryDiscovery::find();
+        $this->streamFactory = $streamFactory ?: StreamFactoryDiscovery::find();
         $this->options = $options;
     }
 
