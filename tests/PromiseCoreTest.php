@@ -84,6 +84,39 @@ class PromiseCoreTest extends BaseUnitTestCase
     }
 
     /**
+     * «onReject» callback can throw exception.
+     *
+     * @see https://github.com/php-http/curl-client/issues/26
+     */
+    public function testIssue26()
+    {
+        $request = $this->createRequest('GET', '/');
+        $this->handle = curl_init();
+
+        $core = new PromiseCore(
+            $request,
+            $this->handle,
+            new ResponseBuilder($this->createResponse())
+        );
+        $core->addOnRejected(
+            function (RequestException $exception) {
+                throw new RequestException('Foo', $exception->getRequest(), $exception);
+            }
+        );
+        $core->addOnRejected(
+            function (RequestException $exception) {
+                return new RequestException('Bar', $exception->getRequest(), $exception);
+            }
+        );
+
+        $exception = new RequestException('Error', $request);
+        $core->reject($exception);
+        static::assertEquals(Promise::REJECTED, $core->getState());
+        static::assertInstanceOf(Exception::class, $core->getException());
+        static::assertEquals('Bar', $core->getException()->getMessage());
+    }
+
+    /**
      * @expectedException \LogicException
      */
     public function testNotRejected()

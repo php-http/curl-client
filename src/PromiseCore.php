@@ -185,7 +185,12 @@ class PromiseCore
         $this->state = Promise::FULFILLED;
         $response = $this->responseBuilder->getResponse();
         $response->getBody()->seek(0);
-        $response = $this->call($this->onFulfilled, $response);
+
+        while (count($this->onFulfilled) > 0) {
+            $callback = array_shift($this->onFulfilled);
+            $response = call_user_func($callback, $response);
+        }
+
         if ($response instanceof ResponseInterface) {
             $this->responseBuilder->setResponse($response);
         }
@@ -201,10 +206,14 @@ class PromiseCore
         $this->exception = $exception;
         $this->state = Promise::REJECTED;
 
-        try {
-            $this->call($this->onRejected, $this->exception);
-        } catch (Exception $exception) {
-            $this->exception = $exception;
+        while (count($this->onRejected) > 0) {
+            $callback = array_shift($this->onRejected);
+            try {
+                $exception = call_user_func($callback, $this->exception);
+                $this->exception = $exception;
+            } catch (Exception $exception) {
+                $this->exception = $exception;
+            }
         }
     }
 
