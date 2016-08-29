@@ -1,5 +1,13 @@
 # Change Log
 
+## 1.5.1 - 2016-08-29
+
+### Fixed
+
+- #26: Combining CurlClient with StopwatchPlugin causes Promise onRejected handler to never be
+  invoked.
+
+
 ## 1.5 - 2016-08-03
 
 ### Changed
