@@ -4,7 +4,9 @@
 
 ### Changed
 
-- `Client::sendRequest` now throws NetworkException on network errors.
+- `Client::sendRequest` now throws `Http\Client\Exception\NetworkException` on network errors.
+- `\UnexpectedValueException` replaced with `Http\Client\Exception\RequestException` in
+  `Client::sendRequest` and `Client::sendAsyncRequest`
 
 
 ## 1.5.1 - 2016-08-29

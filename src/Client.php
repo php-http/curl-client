@@ -102,8 +102,8 @@ class Client implements HttpClient, HttpAsyncClient
      * @throws \Http\Client\Exception\RequestException On invalid request.
      * @throws \InvalidArgumentException For invalid header names or values.
      * @throws \RuntimeException         If creating the body stream fails.
-     * @throws \UnexpectedValueException if unsupported HTTP version requested
      *
+     * @since x.x \UnexpectedValueException replaced with RequestException.
      * @since x.x Throw NetworkException on network errors.
      * @since 1.0
      */
@@ -149,11 +149,11 @@ class Client implements HttpClient, HttpAsyncClient
      *
      * @return Promise
      *
+     * @throws \Http\Client\Exception\RequestException On invalid request.
      * @throws \InvalidArgumentException For invalid header names or values.
-     * @throws \RuntimeException         If creating the body stream fails.
-     * @throws \UnexpectedValueException If unsupported HTTP version requested
-     * @throws Exception
+     * @throws \RuntimeException If creating the body stream fails.
      *
+     * @since x.x \UnexpectedValueException replaced with RequestException.
      * @since 1.0
      */
     public function sendAsyncRequest(RequestInterface $request)
@@ -180,9 +180,9 @@ class Client implements HttpClient, HttpAsyncClient
      * @param RequestInterface $request
      * @param ResponseBuilder  $responseBuilder
      *
+     * @throws \Http\Client\Exception\RequestException On invalid request.
      * @throws \InvalidArgumentException For invalid header names or values.
      * @throws \RuntimeException if can not read body
-     * @throws \UnexpectedValueException if unsupported HTTP version requested
      *
      * @return array
      */
@@ -194,7 +194,12 @@ class Client implements HttpClient, HttpAsyncClient
         $options[CURLOPT_RETURNTRANSFER] = false;
         $options[CURLOPT_FOLLOWLOCATION] = false;
 
-        $options[CURLOPT_HTTP_VERSION] = $this->getProtocolVersion($request->getProtocolVersion());
+        try {
+            $options[CURLOPT_HTTP_VERSION]
+                = $this->getProtocolVersion($request->getProtocolVersion());
+        } catch (\UnexpectedValueException $e) {
+            throw new Exception\RequestException($e->getMessage(), $request);
+        }
         $options[CURLOPT_URL] = (string) $request->getUri();
 
         /*
