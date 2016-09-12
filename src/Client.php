@@ -2,7 +2,6 @@
 namespace Http\Client\Curl;
 
 use Http\Client\Exception;
-use Http\Client\Exception\RequestException;
 use Http\Client\HttpAsyncClient;
 use Http\Client\HttpClient;
 use Http\Discovery\MessageFactoryDiscovery;
@@ -99,11 +98,13 @@ class Client implements HttpClient, HttpAsyncClient
      *
      * @return ResponseInterface
      *
+     * @throws \Http\Client\Exception\NetworkException In case of network problems.
+     * @throws \Http\Client\Exception\RequestException On invalid request.
      * @throws \InvalidArgumentException For invalid header names or values.
      * @throws \RuntimeException         If creating the body stream fails.
      * @throws \UnexpectedValueException if unsupported HTTP version requested
-     * @throws RequestException
      *
+     * @since x.x Throw NetworkException on network errors.
      * @since 1.0
      */
     public function sendRequest(RequestInterface $request)
@@ -120,8 +121,19 @@ class Client implements HttpClient, HttpAsyncClient
         curl_setopt_array($this->handle, $options);
         curl_exec($this->handle);
 
-        if (curl_errno($this->handle) > 0) {
-            throw new RequestException(curl_error($this->handle), $request);
+        $errno = curl_errno($this->handle);
+        switch ($errno) {
+            case CURLE_OK:
+                // All OK, no actions needed.
+                break;
+            case CURLE_COULDNT_RESOLVE_PROXY:
+            case CURLE_COULDNT_RESOLVE_HOST:
+            case CURLE_COULDNT_CONNECT:
+            case CURLE_OPERATION_TIMEOUTED:
+            case CURLE_SSL_CONNECT_ERROR:
+                throw new Exception\NetworkException(curl_error($this->handle), $request);
+            default:
+                throw new Exception\RequestException(curl_error($this->handle), $request);
         }
 
         $response = $responseBuilder->getResponse();

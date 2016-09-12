@@ -1,5 +1,12 @@
 # Change Log
 
+## Unreleased
+
+### Changed
+
+- `Client::sendRequest` now throws NetworkException on network errors.
+
+
 ## 1.5.1 - 2016-08-29
 
 ### Fixed
