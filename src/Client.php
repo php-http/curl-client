@@ -103,8 +103,8 @@ class Client implements HttpClient, HttpAsyncClient
      * @throws \InvalidArgumentException For invalid header names or values.
      * @throws \RuntimeException         If creating the body stream fails.
      *
-     * @since x.x \UnexpectedValueException replaced with RequestException.
-     * @since x.x Throw NetworkException on network errors.
+     * @since 1.6 \UnexpectedValueException replaced with RequestException.
+     * @since 1.6 Throw NetworkException on network errors.
      * @since 1.0
      */
     public function sendRequest(RequestInterface $request)
@@ -153,7 +153,7 @@ class Client implements HttpClient, HttpAsyncClient
      * @throws \InvalidArgumentException For invalid header names or values.
      * @throws \RuntimeException If creating the body stream fails.
      *
-     * @since x.x \UnexpectedValueException replaced with RequestException.
+     * @since 1.6 \UnexpectedValueException replaced with RequestException.
      * @since 1.0
      */
     public function sendAsyncRequest(RequestInterface $request)
