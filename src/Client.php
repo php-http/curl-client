@@ -202,42 +202,7 @@ class Client implements HttpClient, HttpAsyncClient
         }
         $options[CURLOPT_URL] = (string) $request->getUri();
 
-        /*
-         * Add body to request. Some HTTP methods can not have payload:
-         *
-         * - GET — cURL will automatically change method to PUT or POST if we set CURLOPT_UPLOAD or
-         *   CURLOPT_POSTFIELDS.
-         * - HEAD — cURL treats HEAD as GET request with a same restrictions.
-         * - TRACE — According to RFC7231: a client MUST NOT send a message body in a TRACE request.
-         */
-        if (!in_array($request->getMethod(), ['GET', 'HEAD', 'TRACE'], true)) {
-            $body = $request->getBody();
-            $bodySize = $body->getSize();
-            if ($bodySize !== 0) {
-                // Message has non empty body.
-                if (null === $bodySize || $bodySize > 1024 * 1024) {
-                    // Avoid full loading large or unknown size body into memory
-                    $options[CURLOPT_UPLOAD] = true;
-                    if (null !== $bodySize) {
-                        $options[CURLOPT_INFILESIZE] = $bodySize;
-                    }
-                    $options[CURLOPT_READFUNCTION] = function ($ch, $fd, $length) use ($body) {
-                        return $body->read($length);
-                    };
-                } else {
-                    // Small body can be loaded into memory
-                    $options[CURLOPT_POSTFIELDS] = (string) $body;
-                }
-            }
-        }
-
-        if ($request->getMethod() === 'HEAD') {
-            // This will set HTTP method to "HEAD".
-            $options[CURLOPT_NOBODY] = true;
-        } elseif ($request->getMethod() !== 'GET') {
-            // GET is a default method. Other methods should be specified explicitly.
-            $options[CURLOPT_CUSTOMREQUEST] = $request->getMethod();
-        }
+        $options = $this->addRequestBodyOptions($request, $options);
 
         $options[CURLOPT_HTTPHEADER] = $this->createHeaders($request, $options);
 
@@ -289,6 +254,56 @@ class Client implements HttpClient, HttpAsyncClient
         }
 
         return CURL_HTTP_VERSION_NONE;
+    }
+
+    /**
+     * Add request body related cURL options.
+     *
+     * @param RequestInterface $request
+     * @param array            $options
+     *
+     * @return array
+     */
+    private function addRequestBodyOptions(RequestInterface $request, array $options)
+    {
+        /*
+         * Some HTTP methods cannot have payload:
+         *
+         * - GET — cURL will automatically change method to PUT or POST if we set CURLOPT_UPLOAD or
+         *   CURLOPT_POSTFIELDS.
+         * - HEAD — cURL treats HEAD as GET request with a same restrictions.
+         * - TRACE — According to RFC7231: a client MUST NOT send a message body in a TRACE request.
+         */
+        if (!in_array($request->getMethod(), ['GET', 'HEAD', 'TRACE'], true)) {
+            $body = $request->getBody();
+            $bodySize = $body->getSize();
+            if ($bodySize !== 0) {
+                // Message has non empty body.
+                if (null === $bodySize || $bodySize > 1024 * 1024) {
+                    // Avoid full loading large or unknown size body into memory
+                    $options[CURLOPT_UPLOAD] = true;
+                    if (null !== $bodySize) {
+                        $options[CURLOPT_INFILESIZE] = $bodySize;
+                    }
+                    $options[CURLOPT_READFUNCTION] = function ($ch, $fd, $length) use ($body) {
+                        return $body->read($length);
+                    };
+                } else {
+                    // Small body can be loaded into memory
+                    $options[CURLOPT_POSTFIELDS] = (string) $body;
+                }
+            }
+        }
+
+        if ($request->getMethod() === 'HEAD') {
+            // This will set HTTP method to "HEAD".
+            $options[CURLOPT_NOBODY] = true;
+        } elseif ($request->getMethod() !== 'GET') {
+            // GET is a default method. Other methods should be specified explicitly.
+            $options[CURLOPT_CUSTOMREQUEST] = $request->getMethod();
+        }
+
+        return $options;
     }
 
     /**
