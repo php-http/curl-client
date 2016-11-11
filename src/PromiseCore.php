@@ -216,22 +216,4 @@ class PromiseCore
             }
         }
     }
-
-    /**
-     * Call functions.
-     *
-     * @param callable[] $callbacks on fulfill or on reject callback queue
-     * @param mixed      $argument  response or exception
-     *
-     * @return mixed response or exception
-     */
-    private function call(array &$callbacks, $argument)
-    {
-        while (count($callbacks) > 0) {
-            $callback = array_shift($callbacks);
-            $argument = call_user_func($callback, $argument);
-        }
-
-        return $argument;
-    }
 }
