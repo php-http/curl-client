@@ -177,14 +177,19 @@ class PromiseCore
 
     /**
      * Fulfill promise.
-     *
-     * @throws \Exception from on fulfill handler.
      */
     public function fulfill()
     {
         $this->state = Promise::FULFILLED;
         $response = $this->responseBuilder->getResponse();
-        $response->getBody()->seek(0);
+        try {
+            $response->getBody()->seek(0);
+        } catch (\RuntimeException $e) {
+            $exception = new Exception\TransferException($e->getMessage(), $e->getCode(), $e);
+            $this->reject($exception);
+
+            return;
+        }
 
         while (count($this->onFulfilled) > 0) {
             $callback = array_shift($this->onFulfilled);

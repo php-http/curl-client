@@ -1,5 +1,12 @@
 # Change Log
 
+## Unreleased
+
+### Fixed
+
+- #27: ErrorPlugin and sendAsyncRequest() incompatibility
+
+
 ## 1.6 - 2016-09-12
 
 ### Changed

@@ -93,13 +93,7 @@ class MultiRunner
                 }
 
                 if (CURLE_OK === $info['result']) {
-                    try {
-                        $core->fulfill();
-                    } catch (\Exception $e) {
-                        $core->reject(
-                            new RequestException($e->getMessage(), $core->getRequest(), $e)
-                        );
-                    }
+                    $core->fulfill();
                 } else {
                     $error = curl_error($core->getHandle());
                     $core->reject(new RequestException($error, $core->getRequest()));
