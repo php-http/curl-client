@@ -1,6 +1,6 @@
 # Change Log
 
-## Unreleased
+## 1.6.1 - 2016-11-11
 
 ### Fixed
 
