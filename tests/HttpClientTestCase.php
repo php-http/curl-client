@@ -78,7 +78,7 @@ abstract class HttpClientTestCase extends HttpClientTest
         $request = self::$messageFactory->createRequest(
             'POST',
             PHPUnitUtility::getUri(),
-            [],
+            ['content-length' => 1024 * 2048],
             $body
         );
 
@@ -86,9 +86,13 @@ abstract class HttpClientTestCase extends HttpClientTest
         $this->assertResponse(
             $response,
             [
-                'body' => 'Ok',
+                'body' => 'Ok'
             ]
         );
+
+        $request = $this->getRequest();
+        self::assertArrayHasKey('CONTENT_LENGTH', $request['SERVER']);
+        self::assertEquals($body->getSize(), $request['SERVER']['CONTENT_LENGTH']);
     }
 
     /**

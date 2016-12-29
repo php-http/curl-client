@@ -317,20 +317,21 @@ class Client implements HttpClient, HttpAsyncClient
     private function createHeaders(RequestInterface $request, array $options)
     {
         $curlHeaders = [];
-        $headers = array_keys($request->getHeaders());
-        foreach ($headers as $name) {
+        $headers = $request->getHeaders();
+        foreach ($headers as $name => $values) {
             $header = strtolower($name);
             if ('expect' === $header) {
                 // curl-client does not support "Expect-Continue", so dropping "expect" headers
                 continue;
             }
             if ('content-length' === $header) {
-                $values = [0];
                 if (array_key_exists(CURLOPT_POSTFIELDS, $options)) {
+                    // Small body content length can be calculated here.
                     $values = [strlen($options[CURLOPT_POSTFIELDS])];
+                } elseif (!array_key_exists(CURLOPT_READFUNCTION, $options)) {
+                    // Else if there is no body, forcing "Content-length" to 0
+                    $values = [0];
                 }
-            } else {
-                $values = $request->getHeader($name);
             }
             foreach ($values as $value) {
                 $curlHeaders[] = $name . ': ' . $value;
