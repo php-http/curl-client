@@ -1,5 +1,12 @@
 # Change Log
 
+## Unreleased
+
+### Changed
+
+- Use binary mode to create response body stream.
+
+
 ## 1.6.1 - 2016-11-11
 
 ### Fixed

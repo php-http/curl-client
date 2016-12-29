@@ -355,7 +355,7 @@ class Client implements HttpClient, HttpAsyncClient
     private function createResponseBuilder()
     {
         try {
-            $body = $this->streamFactory->createStream(fopen('php://temp', 'w+'));
+            $body = $this->streamFactory->createStream(fopen('php://temp', 'w+b'));
         } catch (\InvalidArgumentException $e) {
             throw new \RuntimeException('Can not create "php://temp" stream.');
         }
