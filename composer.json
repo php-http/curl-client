@@ -12,6 +12,9 @@
     ],
     "prefer-stable": true,
     "minimum-stability": "beta",
+    "config": {
+        "bin-dir": "vendor/bin"
+    },
     "require": {
         "php": "^5.5 || ^7.0",
         "ext-curl": "*",
