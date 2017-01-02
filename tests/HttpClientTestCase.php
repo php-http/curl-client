@@ -67,7 +67,7 @@ abstract class HttpClientTestCase extends HttpClientTest
     public function testSendLargeFile()
     {
         $filename = $this->createTempFile();
-        $fd = fopen($filename, 'a');
+        $fd = fopen($filename, 'ab');
         $buffer = str_repeat('x', 1024);
         for ($i = 0; $i < 2048; $i++) {
             fwrite($fd, $buffer);
@@ -91,8 +91,8 @@ abstract class HttpClientTestCase extends HttpClientTest
         );
 
         $request = $this->getRequest();
-        self::assertArrayHasKey('CONTENT_LENGTH', $request['SERVER']);
-        self::assertEquals($body->getSize(), $request['SERVER']['CONTENT_LENGTH']);
+        self::assertArrayHasKey('HTTP_CONTENT_LENGTH', $request['SERVER']);
+        self::assertEquals($body->getSize(), $request['SERVER']['HTTP_CONTENT_LENGTH']);
     }
 
     /**
