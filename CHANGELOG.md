@@ -1,6 +1,10 @@
 # Change Log
 
-## Unreleased
+## 1.6.2 - 2017-01-02
+
+### Fixed
+
+- #29: Request not using CURLOPT_POSTFIELDS have content-length set to 
 
 ### Changed
 
