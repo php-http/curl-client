@@ -278,6 +278,10 @@ class Client implements HttpClient, HttpAsyncClient
             $body = $request->getBody();
             $bodySize = $body->getSize();
             if ($bodySize !== 0) {
+                if ($body->isSeekable()) {
+                    $body->rewind();
+                }
+
                 // Message has non empty body.
                 if (null === $bodySize || $bodySize > 1024 * 1024) {
                     // Avoid full loading large or unknown size body into memory
