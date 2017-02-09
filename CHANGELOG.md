@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.7 - 2017-02-09
+
+### Changed
+
+- #30: Make sure we rewind streams
+
 ## 1.6.2 - 2017-01-02
 
 ### Fixed
