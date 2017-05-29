@@ -3,6 +3,7 @@ namespace Http\Client\Curl\Tests;
 
 use GuzzleHttp\Psr7\Stream;
 use Http\Client\Curl\Client;
+use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\Request;
 
 /**
@@ -10,7 +11,7 @@ use Zend\Diactoros\Request;
  *
  * @covers Http\Client\Curl\Client
  */
-class ClientTest extends \PHPUnit_Framework_TestCase
+class ClientTest extends TestCase
 {
     /**
      * "Expect" header should be empty

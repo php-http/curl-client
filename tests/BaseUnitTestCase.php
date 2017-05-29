@@ -3,13 +3,14 @@ namespace Http\Client\Curl\Tests;
 
 use Http\Client\Curl\PromiseCore;
 use Http\Discovery\MessageFactoryDiscovery;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
  * Base class for unit tests
  */
-abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
+abstract class BaseUnitTestCase extends TestCase
 {
     /**
      * Test cURL handle
