@@ -1,4 +1,5 @@
 <?php
+
 namespace Http\Client\Curl\Tests;
 
 use Http\Client\Tests\HttpClientTest;
@@ -6,7 +7,7 @@ use Http\Client\Tests\PHPUnitUtility;
 use Psr\Http\Message\StreamInterface;
 
 /**
- * Base class for client integration tests
+ * Base class for client integration tests.
  */
 abstract class HttpClientTestCase extends HttpClientTest
 {
@@ -27,7 +28,7 @@ abstract class HttpClientTestCase extends HttpClientTest
             static::markTestSkipped('This test can not run under HHVM');
         }
         if (null !== $body && in_array($method, ['GET', 'HEAD', 'TRACE'], true)) {
-            static::markTestSkipped('cURL can not send body using ' . $method);
+            static::markTestSkipped('cURL can not send body using '.$method);
         }
         parent::testSendRequest(
             $method,
@@ -69,7 +70,7 @@ abstract class HttpClientTestCase extends HttpClientTest
         $filename = $this->createTempFile();
         $fd = fopen($filename, 'ab');
         $buffer = str_repeat('x', 1024);
-        for ($i = 0; $i < 2048; $i++) {
+        for ($i = 0; $i < 2048; ++$i) {
             fwrite($fd, $buffer);
         }
         fclose($fd);
@@ -86,7 +87,7 @@ abstract class HttpClientTestCase extends HttpClientTest
         $this->assertResponse(
             $response,
             [
-                'body' => 'Ok'
+                'body' => 'Ok',
             ]
         );
 
@@ -109,7 +110,7 @@ abstract class HttpClientTestCase extends HttpClientTest
     }
 
     /**
-     * Create stream from file
+     * Create stream from file.
      *
      * @param string $filename
      *
@@ -118,7 +119,7 @@ abstract class HttpClientTestCase extends HttpClientTest
     abstract protected function createFileStream($filename);
 
     /**
-     * Tears down the fixture
+     * Tears down the fixture.
      */
     protected function tearDown()
     {

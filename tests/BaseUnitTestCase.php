@@ -1,4 +1,5 @@
 <?php
+
 namespace Http\Client\Curl\Tests;
 
 use Http\Client\Curl\PromiseCore;
@@ -8,12 +9,12 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Base class for unit tests
+ * Base class for unit tests.
  */
 abstract class BaseUnitTestCase extends TestCase
 {
     /**
-     * Test cURL handle
+     * Test cURL handle.
      *
      * @var resource|null
      */
@@ -31,10 +32,10 @@ abstract class BaseUnitTestCase extends TestCase
     }
 
     /**
-     * Create new request
+     * Create new request.
      *
      * @param string $method
-     * @param mixed $uri
+     * @param mixed  $uri
      *
      * @return RequestInterface
      */
@@ -44,7 +45,7 @@ abstract class BaseUnitTestCase extends TestCase
     }
 
     /**
-     * Create new response
+     * Create new response.
      *
      * @return ResponseInterface
      */
@@ -54,7 +55,7 @@ abstract class BaseUnitTestCase extends TestCase
     }
 
     /**
-     * Create PromiseCore mock
+     * Create PromiseCore mock.
      *
      * @return PromiseCore|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -68,6 +69,7 @@ abstract class BaseUnitTestCase extends TestCase
         unset($item);
         $core = $this->getMockBuilder(PromiseCore::class)->disableOriginalConstructor()
             ->setMethods($methods)->getMock();
+
         return $core;
     }
 }

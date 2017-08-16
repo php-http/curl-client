@@ -1,4 +1,5 @@
 <?php
+
 namespace Http\Client\Curl\Tests;
 
 use Http\Client\Curl\Client;
@@ -9,7 +10,7 @@ use Psr\Http\Message\StreamInterface;
 use Zend\Diactoros\Stream;
 
 /**
- * Tests for Http\Client\Curl\Client
+ * Tests for Http\Client\Curl\Client.
  */
 class HttpClientDiactorosTest extends HttpClientTestCase
 {
@@ -22,7 +23,7 @@ class HttpClientDiactorosTest extends HttpClientTestCase
     }
 
     /**
-     * Create stream from file
+     * Create stream from file.
      *
      * @param string $filename
      *

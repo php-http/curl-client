@@ -1,33 +1,33 @@
 <?php
+
 namespace Http\Client\Curl;
 
 use Http\Client\Exception\RequestException;
 
 /**
- * Simultaneous requests runner
+ * Simultaneous requests runner.
  *
  * @license http://opensource.org/licenses/MIT MIT
- *
  * @author  Михаил Красильников <m.krasilnikov@yandex.ru>
  */
 class MultiRunner
 {
     /**
-     * cURL multi handle
+     * cURL multi handle.
      *
      * @var resource|null
      */
     private $multiHandle = null;
 
     /**
-     * Awaiting cores
+     * Awaiting cores.
      *
      * @var PromiseCore[]
      */
     private $cores = [];
 
     /**
-     * Release resources if still active
+     * Release resources if still active.
      */
     public function __destruct()
     {
@@ -37,7 +37,7 @@ class MultiRunner
     }
 
     /**
-     * Add promise to runner
+     * Add promise to runner.
      *
      * @param PromiseCore $core
      */
@@ -58,7 +58,7 @@ class MultiRunner
     }
 
     /**
-     * Remove promise from runner
+     * Remove promise from runner.
      *
      * @param PromiseCore $core
      */
@@ -68,6 +68,7 @@ class MultiRunner
             if ($existed === $core) {
                 curl_multi_remove_handle($this->multiHandle, $core->getHandle());
                 unset($this->cores[$index]);
+
                 return;
             }
         }
@@ -122,6 +123,7 @@ class MultiRunner
                 return $core;
             }
         }
+
         return null;
     }
 }

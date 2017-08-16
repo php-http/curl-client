@@ -1,20 +1,20 @@
 <?php
+
 namespace Http\Client\Curl\Tests;
 
-use GuzzleHttp\Psr7\Stream;
 use Http\Client\Curl\Client;
 use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\Request;
 
 /**
- * Tests for Http\Client\Curl\Client
+ * Tests for Http\Client\Curl\Client.
  *
- * @covers Http\Client\Curl\Client
+ * @covers \Http\Client\Curl\Client
  */
 class ClientTest extends TestCase
 {
     /**
-     * "Expect" header should be empty
+     * "Expect" header should be empty.
      *
      * @link https://github.com/php-http/curl-client/issues/18
      */
@@ -32,8 +32,6 @@ class ClientTest extends TestCase
 
         static::assertContains('Expect:', $headers);
     }
-
-
 
     public function testRewindStream()
     {
@@ -60,7 +58,7 @@ class ClientTest extends TestCase
         $bodyOptions->setAccessible(true);
 
         $content = 'abcdef';
-        while (strlen($content) < 1024*1024+100) {
+        while (strlen($content) < 1024 * 1024 + 100) {
             $content .= '123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890';
         }
 
@@ -78,7 +76,7 @@ class ClientTest extends TestCase
      */
     public function testFactoryDiscovery()
     {
-        $client = new Client;
+        $client = new Client();
 
         static::assertInstanceOf(Client::class, $client);
     }

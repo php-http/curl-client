@@ -1,4 +1,5 @@
 <?php
+
 namespace Http\Client\Curl\Tests;
 
 use GuzzleHttp\Psr7\Stream;
@@ -9,7 +10,7 @@ use Http\Message\StreamFactory\GuzzleStreamFactory;
 use Psr\Http\Message\StreamInterface;
 
 /**
- * Tests for Http\Client\Curl\Client
+ * Tests for Http\Client\Curl\Client.
  */
 class HttpClientGuzzleTest extends HttpClientTestCase
 {
@@ -22,7 +23,7 @@ class HttpClientGuzzleTest extends HttpClientTestCase
     }
 
     /**
-     * Create stream from file
+     * Create stream from file.
      *
      * @param string $filename
      *

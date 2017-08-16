@@ -1,4 +1,5 @@
 <?php
+
 namespace Http\Client\Curl\Tests;
 
 use Http\Client\Curl\Client;
@@ -7,7 +8,7 @@ use Http\Message\MessageFactory\GuzzleMessageFactory;
 use Http\Message\StreamFactory\GuzzleStreamFactory;
 
 /**
- * Tests for Http\Client\Curl\Client
+ * Tests for Http\Client\Curl\Client.
  */
 class HttpAsyncClientGuzzleTest extends HttpAsyncClientTestCase
 {

@@ -1,4 +1,5 @@
 <?php
+
 namespace Http\Client\Curl;
 
 use Http\Client\Exception;
@@ -13,61 +14,61 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * PSR-7 compatible cURL based HTTP client
+ * PSR-7 compatible cURL based HTTP client.
  *
  * @license http://opensource.org/licenses/MIT MIT
- *
  * @author  Михаил Красильников <m.krasilnikov@yandex.ru>
  * @author  Blake Williams <github@shabbyrobe.org>
  *
  * @api
+ *
  * @since   1.0
  */
 class Client implements HttpClient, HttpAsyncClient
 {
     /**
-     * cURL options
+     * cURL options.
      *
      * @var array
      */
     private $options;
 
     /**
-     * PSR-7 message factory
+     * PSR-7 message factory.
      *
      * @var MessageFactory
      */
     private $messageFactory;
 
     /**
-     * PSR-7 stream factory
+     * PSR-7 stream factory.
      *
      * @var StreamFactory
      */
     private $streamFactory;
 
     /**
-     * cURL synchronous requests handle
+     * cURL synchronous requests handle.
      *
      * @var resource|null
      */
     private $handle = null;
 
     /**
-     * Simultaneous requests runner
+     * Simultaneous requests runner.
      *
      * @var MultiRunner|null
      */
     private $multiRunner = null;
 
     /**
-     * Create new client
+     * Create new client.
      *
      * @param MessageFactory|null $messageFactory HTTP Message factory
      * @param StreamFactory|null  $streamFactory  HTTP Stream factory
      * @param array               $options        cURL options (see http://php.net/curl_setopt)
      *
-     * @throws \Http\Discovery\Exception\NotFoundException If factory discovery failed.
+     * @throws \Http\Discovery\Exception\NotFoundException If factory discovery failed
      *
      * @since 1.0
      */
@@ -82,7 +83,7 @@ class Client implements HttpClient, HttpAsyncClient
     }
 
     /**
-     * Release resources if still active
+     * Release resources if still active.
      */
     public function __destruct()
     {
@@ -98,13 +99,13 @@ class Client implements HttpClient, HttpAsyncClient
      *
      * @return ResponseInterface
      *
-     * @throws \Http\Client\Exception\NetworkException In case of network problems.
-     * @throws \Http\Client\Exception\RequestException On invalid request.
-     * @throws \InvalidArgumentException For invalid header names or values.
-     * @throws \RuntimeException         If creating the body stream fails.
+     * @throws \Http\Client\Exception\NetworkException In case of network problems
+     * @throws \Http\Client\Exception\RequestException On invalid request
+     * @throws \InvalidArgumentException               For invalid header names or values
+     * @throws \RuntimeException                       If creating the body stream fails
      *
-     * @since 1.6 \UnexpectedValueException replaced with RequestException.
-     * @since 1.6 Throw NetworkException on network errors.
+     * @since 1.6 \UnexpectedValueException replaced with RequestException
+     * @since 1.6 Throw NetworkException on network errors
      * @since 1.0
      */
     public function sendRequest(RequestInterface $request)
@@ -149,11 +150,11 @@ class Client implements HttpClient, HttpAsyncClient
      *
      * @return Promise
      *
-     * @throws \Http\Client\Exception\RequestException On invalid request.
-     * @throws \InvalidArgumentException For invalid header names or values.
-     * @throws \RuntimeException If creating the body stream fails.
+     * @throws \Http\Client\Exception\RequestException On invalid request
+     * @throws \InvalidArgumentException               For invalid header names or values
+     * @throws \RuntimeException                       If creating the body stream fails
      *
-     * @since 1.6 \UnexpectedValueException replaced with RequestException.
+     * @since 1.6 \UnexpectedValueException replaced with RequestException
      * @since 1.0
      */
     public function sendAsyncRequest(RequestInterface $request)
@@ -175,14 +176,14 @@ class Client implements HttpClient, HttpAsyncClient
     }
 
     /**
-     * Generates cURL options
+     * Generates cURL options.
      *
      * @param RequestInterface $request
      * @param ResponseBuilder  $responseBuilder
      *
-     * @throws \Http\Client\Exception\RequestException On invalid request.
-     * @throws \InvalidArgumentException For invalid header names or values.
-     * @throws \RuntimeException if can not read body
+     * @throws \Http\Client\Exception\RequestException On invalid request
+     * @throws \InvalidArgumentException               For invalid header names or values
+     * @throws \RuntimeException                       if can not read body
      *
      * @return array
      */
@@ -231,7 +232,7 @@ class Client implements HttpClient, HttpAsyncClient
     }
 
     /**
-     * Return cURL constant for specified HTTP version
+     * Return cURL constant for specified HTTP version.
      *
      * @param string $requestVersion
      *
@@ -311,7 +312,7 @@ class Client implements HttpClient, HttpAsyncClient
     }
 
     /**
-     * Create headers array for CURLOPT_HTTPHEADER
+     * Create headers array for CURLOPT_HTTPHEADER.
      *
      * @param RequestInterface $request
      * @param array            $options cURL options
@@ -338,7 +339,7 @@ class Client implements HttpClient, HttpAsyncClient
                 }
             }
             foreach ($values as $value) {
-                $curlHeaders[] = $name . ': ' . $value;
+                $curlHeaders[] = $name.': '.$value;
             }
         }
         /*
@@ -351,11 +352,11 @@ class Client implements HttpClient, HttpAsyncClient
     }
 
     /**
-     * Create new ResponseBuilder instance
+     * Create new ResponseBuilder instance.
      *
      * @return ResponseBuilder
      *
-     * @throws \RuntimeException If creating the stream from $body fails.
+     * @throws \RuntimeException If creating the stream from $body fails
      */
     private function createResponseBuilder()
     {

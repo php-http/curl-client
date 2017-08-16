@@ -1,10 +1,11 @@
 <?php
+
 namespace Http\Client\Curl\Tests;
 
 use Http\Client\Tests\HttpAsyncClientTest;
 
 /**
- * Base class for async client integration tests
+ * Base class for async client integration tests.
  */
 abstract class HttpAsyncClientTestCase extends HttpAsyncClientTest
 {
@@ -18,7 +19,7 @@ abstract class HttpAsyncClientTestCase extends HttpAsyncClientTest
             static::markTestSkipped('This test can not run under HHVM');
         }
         if (null !== $body && in_array($method, ['GET', 'HEAD', 'TRACE'], true)) {
-            static::markTestSkipped('cURL can not send body using ' . $method);
+            static::markTestSkipped('cURL can not send body using '.$method);
         }
         parent::testAsyncSendRequest(
             $method,

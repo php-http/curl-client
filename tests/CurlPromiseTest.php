@@ -1,4 +1,5 @@
 <?php
+
 namespace Http\Client\Curl\Tests;
 
 use Http\Client\Curl\CurlPromise;
@@ -7,14 +8,14 @@ use Http\Client\Exception\TransferException;
 use Http\Promise\Promise;
 
 /**
- * Tests for Http\Client\Curl\CurlPromise
+ * Tests for Http\Client\Curl\CurlPromise.
  *
- * @covers Http\Client\Curl\CurlPromise
+ * @covers \Http\Client\Curl\CurlPromise
  */
 class CurlPromiseTest extends BaseUnitTestCase
 {
     /**
-     * Test that promise call core methods
+     * Test that promise call core methods.
      */
     public function testCoreCalls()
     {

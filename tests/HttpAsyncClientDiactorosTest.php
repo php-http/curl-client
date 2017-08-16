@@ -1,4 +1,5 @@
 <?php
+
 namespace Http\Client\Curl\Tests;
 
 use Http\Client\Curl\Client;
@@ -7,7 +8,7 @@ use Http\Message\MessageFactory\DiactorosMessageFactory;
 use Http\Message\StreamFactory\DiactorosStreamFactory;
 
 /**
- * Tests for Http\Client\Curl\Client
+ * Tests for Http\Client\Curl\Client.
  */
 class HttpAsyncClientDiactorosTest extends HttpAsyncClientTestCase
 {

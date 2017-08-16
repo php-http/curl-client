@@ -1,4 +1,5 @@
 <?php
+
 namespace Http\Client\Curl;
 
 use Http\Promise\Promise;
@@ -12,20 +13,19 @@ use Http\Promise\Promise;
  * Reason is replaced by an object where its class implement a Http\Client\Exception.
  *
  * @license http://opensource.org/licenses/MIT MIT
- *
  * @author  Михаил Красильников <m.krasilnikov@yandex.ru>
  */
 class CurlPromise implements Promise
 {
     /**
-     * Shared promise core
+     * Shared promise core.
      *
      * @var PromiseCore
      */
     private $core;
 
     /**
-     * Requests runner
+     * Requests runner.
      *
      * @var MultiRunner
      */
@@ -49,13 +49,13 @@ class CurlPromise implements Promise
      * If you do not care about one of the cases, you can set the corresponding callable to null
      * The callback will be called when the response or exception arrived and never more than once.
      *
-     * @param callable $onFulfilled Called when a response will be available.
+     * @param callable $onFulfilled Called when a response will be available
      * @param callable $onRejected  Called when an error happens.
      *
-     * You must always return the Response in the interface or throw an Exception.
+     * You must always return the Response in the interface or throw an Exception
      *
      * @return Promise Always returns a new promise which is resolved with value of the executed
-     *                 callback (onFulfilled / onRejected).
+     *                 callback (onFulfilled / onRejected)
      */
     public function then(callable $onFulfilled = null, callable $onRejected = null)
     {
@@ -90,7 +90,7 @@ class CurlPromise implements Promise
      *
      * @return \Psr\Http\Message\ResponseInterface|null Resolved value, null if $unwrap is set to false
      *
-     * @throws \Http\Client\Exception The rejection reason.
+     * @throws \Http\Client\Exception The rejection reason
      */
     public function wait($unwrap = true)
     {
@@ -103,6 +103,7 @@ class CurlPromise implements Promise
 
             return $this->core->getResponse();
         }
+
         return null;
     }
 }
