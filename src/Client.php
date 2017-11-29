@@ -176,6 +176,22 @@ class Client implements HttpClient, HttpAsyncClient
     }
 
     /**
+     * @param int $option
+     *
+     * @throws \RuntimeException On invalid resource
+     *
+     * @return mixed
+     */
+    public function getCurlInfo($option = 0)
+    {
+        if (false === is_resource($this->handle)) {
+            throw new \RuntimeException('Cannot retrieve info: resource missing');
+        }
+
+        return $option ? curl_getinfo($this->handle, $option) : curl_getinfo($this->handle);
+    }
+
+    /**
      * Generates cURL options.
      *
      * @param RequestInterface $request

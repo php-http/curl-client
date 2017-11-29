@@ -80,4 +80,31 @@ class ClientTest extends TestCase
 
         static::assertInstanceOf(Client::class, $client);
     }
+
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Cannot retrieve info: resource missing
+     */
+    public function testEmptyResource()
+    {
+        $client = new Client();
+
+        $client->getCurlInfo();
+    }
+
+    public function testFailedRequest()
+    {
+        $client = new Client();
+
+        $handle = new \ReflectionProperty(Client::class, 'handle');
+        $handle->setAccessible(true);
+        $handle->setValue($client, curl_init());
+        $optionInfo = $client->getCurlInfo(CURLINFO_HTTP_CODE);
+        static::assertTrue(is_int($optionInfo));
+        static::assertEquals(0, $optionInfo);
+        $allInfo = $client->getCurlInfo();
+        static::assertTrue(is_array($allInfo));
+        static::assertEquals(0, $allInfo['request_size']);
+        static::assertEquals(0, $allInfo['http_code']);
+    }
 }
