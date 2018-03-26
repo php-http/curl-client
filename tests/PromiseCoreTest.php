@@ -17,6 +17,40 @@ use Psr\Http\Message\ResponseInterface;
 class PromiseCoreTest extends BaseUnitTestCase
 {
     /**
+     * Testing if handle is not a resource.
+     */
+    public function testHandleIsNotAResource()
+    {
+        $this->setExpectedException(
+            \InvalidArgumentException::class,
+            'Parameter $handle expected to be a cURL resource, NULL given'
+        );
+
+        new PromiseCore(
+            $this->createRequest('GET', '/'),
+            null,
+            new ResponseBuilder($this->createResponse())
+        );
+    }
+
+    /**
+     * Testing if handle is not a cURL resource.
+     */
+    public function testHandleIsNotACurlResource()
+    {
+        $this->setExpectedException(
+            \InvalidArgumentException::class,
+            'Parameter $handle expected to be a cURL resource, stream resource given'
+        );
+
+        new PromiseCore(
+            $this->createRequest('GET', '/'),
+            fopen('php://memory', 'r+b'),
+            new ResponseBuilder($this->createResponse())
+        );
+    }
+
+    /**
      * Test on fulfill actions.
      */
     public function testOnFulfill()
