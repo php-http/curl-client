@@ -76,8 +76,8 @@ class PromiseCore
         $handle,
         ResponseBuilder $responseBuilder
     ) {
-        assert('is_resource($handle)');
-        assert('get_resource_type($handle) === "curl"');
+        assert(is_resource($handle));
+        assert(get_resource_type($handle) === "curl");
 
         $this->request = $request;
         $this->handle = $handle;
