@@ -66,7 +66,7 @@ class Client implements HttpClient, HttpAsyncClient
      *
      * @param MessageFactory|null $messageFactory HTTP Message factory
      * @param StreamFactory|null  $streamFactory  HTTP Stream factory
-     * @param array               $options        cURL options (see http://php.net/curl_setopt)
+     * @param array               $options        cURL options {@link http://php.net/curl_setopt}
      *
      * @throws \Http\Discovery\Exception\NotFoundException If factory discovery failed
      *
@@ -183,7 +183,7 @@ class Client implements HttpClient, HttpAsyncClient
      *
      * @throws \Http\Client\Exception\RequestException On invalid request
      * @throws \InvalidArgumentException               For invalid header names or values
-     * @throws \RuntimeException                       if can not read body
+     * @throws \RuntimeException                       If can not read body
      *
      * @return array
      */
@@ -236,7 +236,7 @@ class Client implements HttpClient, HttpAsyncClient
      *
      * @param string $requestVersion
      *
-     * @throws \UnexpectedValueException if unsupported version requested
+     * @throws \UnexpectedValueException If unsupported version requested
      *
      * @return int
      */
