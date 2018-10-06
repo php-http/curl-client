@@ -236,7 +236,7 @@ class Client implements HttpClient, HttpAsyncClient
      *
      * @param string $requestVersion
      *
-     * @throws \UnexpectedValueException if unsupported version requested
+     * @throws \UnexpectedValueException If unsupported version requested
      *
      * @return int
      */
