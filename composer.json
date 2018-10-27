@@ -11,21 +11,22 @@
         }
     ],
     "prefer-stable": true,
-    "minimum-stability": "beta",
+    "minimum-stability": "dev",
     "config": {
         "bin-dir": "vendor/bin"
     },
     "require": {
-        "php": "^5.5 || ^7.0",
+        "php": "^7.1",
         "ext-curl": "*",
-        "php-http/httplug": "^1.0",
+        "psr/http-client": "^0.3",
+        "php-http/httplug": "^2.0",
         "php-http/message-factory": "^1.0.2",
         "php-http/message": "^1.2",
         "php-http/discovery": "^1.0"
     },
     "require-dev": {
         "guzzlehttp/psr7": "^1.0",
-        "php-http/client-integration-tests": "^0.6",
+        "php-http/client-integration-tests": "dev-master",
         "phpunit/phpunit": "^4.8.27",
         "zendframework/zend-diactoros": "^1.0"
     },
