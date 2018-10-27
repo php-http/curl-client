@@ -10,6 +10,7 @@ use Http\Discovery\StreamFactoryDiscovery;
 use Http\Message\MessageFactory;
 use Http\Message\StreamFactory;
 use Http\Promise\Promise;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -24,7 +25,7 @@ use Psr\Http\Message\ResponseInterface;
  *
  * @since   1.0
  */
-class Client implements HttpClient, HttpAsyncClient
+class Client implements HttpClient, HttpAsyncClient, ClientInterface
 {
     /**
      * cURL options.
@@ -108,7 +109,7 @@ class Client implements HttpClient, HttpAsyncClient
      * @since 1.6 Throw NetworkException on network errors
      * @since 1.0
      */
-    public function sendRequest(RequestInterface $request)
+    public function sendRequest(RequestInterface $request): ResponseInterface
     {
         $responseBuilder = $this->createResponseBuilder();
         $options = $this->createCurlOptions($request, $responseBuilder);
