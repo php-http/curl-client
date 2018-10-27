@@ -18,7 +18,6 @@
     "require": {
         "php": "^7.1",
         "ext-curl": "*",
-        "psr/http-client": "^0.3",
         "php-http/httplug": "^2.0",
         "php-http/message-factory": "^1.0.2",
         "php-http/message": "^1.2",
