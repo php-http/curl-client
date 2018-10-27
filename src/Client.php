@@ -10,7 +10,6 @@ use Http\Discovery\StreamFactoryDiscovery;
 use Http\Message\MessageFactory;
 use Http\Message\StreamFactory;
 use Http\Promise\Promise;
-use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -25,7 +24,7 @@ use Psr\Http\Message\ResponseInterface;
  *
  * @since   1.0
  */
-class Client implements HttpClient, HttpAsyncClient, ClientInterface
+class Client implements HttpClient, HttpAsyncClient
 {
     /**
      * cURL options.
