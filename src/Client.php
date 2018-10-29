@@ -108,7 +108,7 @@ class Client implements HttpClient, HttpAsyncClient
      * @since 1.6 Throw NetworkException on network errors
      * @since 1.0
      */
-    public function sendRequest(RequestInterface $request)
+    public function sendRequest(RequestInterface $request): ResponseInterface
     {
         $responseBuilder = $this->createResponseBuilder();
         $options = $this->createCurlOptions($request, $responseBuilder);
