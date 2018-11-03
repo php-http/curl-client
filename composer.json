@@ -26,7 +26,7 @@
     "require-dev": {
         "guzzlehttp/psr7": "^1.0",
         "php-http/client-integration-tests": "dev-master",
-        "phpunit/phpunit": "^4.8.27",
+        "phpunit/phpunit": "^7.0",
         "zendframework/zend-diactoros": "^1.0"
     },
     "autoload": {

@@ -21,7 +21,7 @@ class PromiseCoreTest extends BaseUnitTestCase
      */
     public function testHandleIsNotAResource()
     {
-        $this->setExpectedException(
+        $this->expectException(
             \InvalidArgumentException::class,
             'Parameter $handle expected to be a cURL resource, NULL given'
         );
@@ -38,7 +38,7 @@ class PromiseCoreTest extends BaseUnitTestCase
      */
     public function testHandleIsNotACurlResource()
     {
-        $this->setExpectedException(
+        $this->expectException(
             \InvalidArgumentException::class,
             'Parameter $handle expected to be a cURL resource, stream resource given'
         );
