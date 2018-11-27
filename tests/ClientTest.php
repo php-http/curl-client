@@ -47,7 +47,7 @@ class ClientTest extends TestCase
         $createHeaders->setAccessible(true);
 
         $request = new Request();
-        $request = $request->withHeader('content-length', 0);
+        $request = $request->withHeader('content-length', '0');
 
         $headers = $createHeaders->invoke($client, $request, [CURLOPT_POSTFIELDS => null]);
 
