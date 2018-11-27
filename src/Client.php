@@ -240,7 +240,7 @@ class Client implements HttpClient, HttpAsyncClient
      *
      * @return int
      */
-    private function getProtocolVersion($requestVersion)
+    private function getProtocolVersion(string $requestVersion): int
     {
         switch ($requestVersion) {
             case '1.0':
@@ -265,7 +265,7 @@ class Client implements HttpClient, HttpAsyncClient
      *
      * @return array
      */
-    private function addRequestBodyOptions(RequestInterface $request, array $options)
+    private function addRequestBodyOptions(RequestInterface $request, array $options): array
     {
         /*
          * Some HTTP methods cannot have payload:
@@ -319,7 +319,7 @@ class Client implements HttpClient, HttpAsyncClient
      *
      * @return string[]
      */
-    private function createHeaders(RequestInterface $request, array $options)
+    private function createHeaders(RequestInterface $request, array $options): array
     {
         $curlHeaders = [];
         $headers = $request->getHeaders();
@@ -358,7 +358,7 @@ class Client implements HttpClient, HttpAsyncClient
      *
      * @throws \RuntimeException If creating the stream from $body fails
      */
-    private function createResponseBuilder()
+    private function createResponseBuilder(): ResponseBuilder
     {
         try {
             $body = $this->streamFactory->createStream(fopen('php://temp', 'w+b'));
