@@ -51,7 +51,7 @@ class ClientTest extends TestCase
 
         $headers = $createHeaders->invoke($client, $request, [CURLOPT_POSTFIELDS => null]);
 
-        static::assertContains('Expect:', $headers);
+        static::assertContains('content-length: 0', $headers);
     }
 
     public function testRewindStream()
