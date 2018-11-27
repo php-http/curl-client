@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 namespace Http\Client\Curl;
 
 use Http\Client\Exception;
@@ -330,10 +330,10 @@ class Client implements HttpClient, HttpAsyncClient
                 continue;
             }
             if ('content-length' === $header) {
-                if (array_key_exists(CURLOPT_POSTFIELDS, $options)) {
+                if (isset($options[CURLOPT_POSTFIELDS])) {
                     // Small body content length can be calculated here.
                     $values = [strlen($options[CURLOPT_POSTFIELDS])];
-                } elseif (!array_key_exists(CURLOPT_READFUNCTION, $options)) {
+                } elseif (!isset($options[CURLOPT_READFUNCTION])) {
                     // Else if there is no body, forcing "Content-length" to 0
                     $values = [0];
                 }

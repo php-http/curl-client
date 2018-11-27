@@ -33,6 +33,27 @@ class ClientTest extends TestCase
         static::assertContains('Expect:', $headers);
     }
 
+    /**
+     * "Expect" header should be empty.
+     *
+     * @link https://github.com/php-http/curl-client/issues/18
+     */
+    public function testWithNullPostFields()
+    {
+        $client = $this->getMockBuilder(Client::class)->disableOriginalConstructor()
+            ->setMethods(['__none__'])->getMock();
+
+        $createHeaders = new \ReflectionMethod(Client::class, 'createHeaders');
+        $createHeaders->setAccessible(true);
+
+        $request = new Request();
+        $request = $request->withHeader('content-length', 0);
+
+        $headers = $createHeaders->invoke($client, $request, [CURLOPT_POSTFIELDS => null]);
+
+        static::assertContains('Expect:', $headers);
+    }
+
     public function testRewindStream()
     {
         $client = $this->getMockBuilder(Client::class)->disableOriginalConstructor()
