@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Http\Client\Curl\Tests;
 
 use Http\Client\Curl\Client;
+use Http\Message\MessageFactory;
+use Http\Message\StreamFactory;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Zend\Diactoros\Request;
 
 /**
@@ -71,6 +74,18 @@ class ClientTest extends TestCase
         $options = $bodyOptions->invoke($client, $request, []);
 
         static::assertTrue(false !== strstr($options[CURLOPT_READFUNCTION](null, null, $length), 'abcdef'), 'Steam was not rewinded');
+    }
+
+    public function testInvalidCurlOptions()
+    {
+        $this->expectException(InvalidOptionsException::class);
+        new Client(
+            $this->createMock(MessageFactory::class),
+            $this->createMock(StreamFactory::class),
+            [
+                CURLOPT_HEADER => true, // this won't work with our client
+            ]
+        );
     }
 
     /**
