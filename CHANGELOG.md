@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Allow cURL options to overwrite our default spec-compliant default configuration
 
 ## 1.7.1 - 2018-03-36
 

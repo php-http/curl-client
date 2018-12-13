@@ -12,6 +12,7 @@ use Http\Message\StreamFactory;
 use Http\Promise\Promise;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * PSR-7 compatible cURL based HTTP client.
@@ -62,8 +63,6 @@ class Client implements HttpClient, HttpAsyncClient
     private $multiRunner = null;
 
     /**
-     * Create new client.
-     *
      * @param MessageFactory|null $messageFactory HTTP Message factory
      * @param StreamFactory|null  $streamFactory  HTTP Stream factory
      * @param array               $options        cURL options {@link http://php.net/curl_setopt}
@@ -79,7 +78,20 @@ class Client implements HttpClient, HttpAsyncClient
     ) {
         $this->messageFactory = $messageFactory ?: MessageFactoryDiscovery::find();
         $this->streamFactory = $streamFactory ?: StreamFactoryDiscovery::find();
-        $this->options = $options;
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults([
+            CURLOPT_HEADER => false,
+            CURLOPT_RETURNTRANSFER => false,
+            CURLOPT_FOLLOWLOCATION => false,
+        ]);
+        $resolver->setAllowedValues(CURLOPT_HEADER, [false]); // our parsing will fail if this is set to true
+        $resolver->setAllowedValues(CURLOPT_RETURNTRANSFER, [false]); // our parsing will fail if this is set to true
+
+        // We do not know what everything curl supports and might support in the future.
+        // Make sure that we accept everything that is in the options.
+        $resolver->setDefined(array_keys($options));
+
+        $this->options = $resolver->resolve($options);
     }
 
     /**
@@ -111,7 +123,7 @@ class Client implements HttpClient, HttpAsyncClient
     public function sendRequest(RequestInterface $request): ResponseInterface
     {
         $responseBuilder = $this->createResponseBuilder();
-        $options = $this->createCurlOptions($request, $responseBuilder);
+        $requestOptions = $this->prepareRequestOptions($request, $responseBuilder);
 
         if (is_resource($this->handle)) {
             curl_reset($this->handle);
@@ -119,7 +131,7 @@ class Client implements HttpClient, HttpAsyncClient
             $this->handle = curl_init();
         }
 
-        curl_setopt_array($this->handle, $options);
+        curl_setopt_array($this->handle, $requestOptions);
         curl_exec($this->handle);
 
         $errno = curl_errno($this->handle);
@@ -165,8 +177,8 @@ class Client implements HttpClient, HttpAsyncClient
 
         $handle = curl_init();
         $responseBuilder = $this->createResponseBuilder();
-        $options = $this->createCurlOptions($request, $responseBuilder);
-        curl_setopt_array($handle, $options);
+        $requestOptions = $this->prepareRequestOptions($request, $responseBuilder);
+        curl_setopt_array($handle, $requestOptions);
 
         $core = new PromiseCore($request, $handle, $responseBuilder);
         $promise = new CurlPromise($core, $this->multiRunner);
@@ -176,7 +188,7 @@ class Client implements HttpClient, HttpAsyncClient
     }
 
     /**
-     * Generates cURL options.
+     * Update cURL options for this request and hook in the response builder.
      *
      * @param RequestInterface $request
      * @param ResponseBuilder  $responseBuilder
@@ -187,13 +199,9 @@ class Client implements HttpClient, HttpAsyncClient
      *
      * @return array
      */
-    private function createCurlOptions(RequestInterface $request, ResponseBuilder $responseBuilder)
+    private function prepareRequestOptions(RequestInterface $request, ResponseBuilder $responseBuilder)
     {
         $options = $this->options;
-
-        $options[CURLOPT_HEADER] = false;
-        $options[CURLOPT_RETURNTRANSFER] = false;
-        $options[CURLOPT_FOLLOWLOCATION] = false;
 
         try {
             $options[CURLOPT_HTTP_VERSION]
