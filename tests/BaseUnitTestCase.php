@@ -63,15 +63,6 @@ abstract class BaseUnitTestCase extends TestCase
      */
     protected function createPromiseCore()
     {
-        $class = new \ReflectionClass(PromiseCore::class);
-        $methods = $class->getMethods(\ReflectionMethod::IS_PUBLIC);
-        foreach ($methods as &$item) {
-            $item = $item->getName();
-        }
-        unset($item);
-        $core = $this->getMockBuilder(PromiseCore::class)->disableOriginalConstructor()
-            ->setMethods($methods)->getMock();
-
-        return $core;
+        return $this->getMockBuilder(PromiseCore::class)->disableOriginalConstructor()->getMock();
     }
 }
