@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Http\Client\Curl\Tests;
 
-use Http\Client\Curl\PromiseCore;
 use Http\Discovery\MessageFactoryDiscovery;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
@@ -37,11 +36,11 @@ abstract class BaseUnitTestCase extends TestCase
      * Create new request.
      *
      * @param string $method
-     * @param mixed  $uri
+     * @param mixed $uri
      *
      * @return RequestInterface
      */
-    protected function createRequest($method, $uri)
+    protected function createRequest(string $method, $uri): RequestInterface
     {
         return MessageFactoryDiscovery::find()->createRequest($method, $uri);
     }
@@ -51,18 +50,8 @@ abstract class BaseUnitTestCase extends TestCase
      *
      * @return ResponseInterface
      */
-    protected function createResponse()
+    protected function createResponse(): ResponseInterface
     {
         return MessageFactoryDiscovery::find()->createResponse();
-    }
-
-    /**
-     * Create PromiseCore mock.
-     *
-     * @return PromiseCore|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function createPromiseCore()
-    {
-        return $this->getMockBuilder(PromiseCore::class)->disableOriginalConstructor()->getMock();
     }
 }

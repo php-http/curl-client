@@ -26,9 +26,6 @@ abstract class HttpClientTestCase extends HttpClientTest
      */
     public function testSendRequest($method, $uri, array $headers, $body)
     {
-        if (defined('HHVM_VERSION')) {
-            static::markTestSkipped('This test can not run under HHVM');
-        }
         if (null !== $body && in_array($method, ['GET', 'HEAD', 'TRACE'], true)) {
             static::markTestSkipped('cURL can not send body using '.$method);
         }
@@ -50,9 +47,6 @@ abstract class HttpClientTestCase extends HttpClientTest
         array $headers,
         $body
     ) {
-        if (defined('HHVM_VERSION')) {
-            static::markTestSkipped('This test can not run under HHVM');
-        }
         if (null !== $body) {
             static::markTestSkipped('cURL can not send body using GET');
         }
