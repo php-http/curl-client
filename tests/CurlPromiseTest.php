@@ -57,8 +57,7 @@ class CurlPromiseTest extends BaseUnitTestCase
     public function testCoreCallWaitRejected()
     {
         $core = $this->createPromiseCore();
-        $runner = $this->getMockBuilder(MultiRunner::class)->disableOriginalConstructor()
-            ->setMethods(['wait'])->getMock();
+        $runner = $this->getMockBuilder(MultiRunner::class)->disableOriginalConstructor()->getMock();
         /** @var MultiRunner|\PHPUnit_Framework_MockObject_MockObject $runner */
         $promise = new CurlPromise($core, $runner);
 
