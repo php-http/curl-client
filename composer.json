@@ -21,6 +21,7 @@
         "ext-curl": "*",
         "php-http/discovery": "^1.0",
         "php-http/httplug": "^2.0",
+        "php-http/message": "^1.2",
         "psr/http-client": "^1.0",
         "psr/http-factory": "^1.0",
         "symfony/options-resolver": "^3.4 || ^4.0"
