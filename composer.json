@@ -1,8 +1,12 @@
 {
     "name": "php-http/curl-client",
-    "description": "cURL client for PHP-HTTP",
+    "description": "PSR-18 cURL client",
     "license": "MIT",
-    "keywords": ["http", "curl"],
+    "keywords": [
+        "curl",
+        "http",
+        "psr-18"
+    ],
     "homepage": "http://php-http.org",
     "authors": [
         {
@@ -12,23 +16,20 @@
     ],
     "prefer-stable": true,
     "minimum-stability": "dev",
-    "config": {
-        "bin-dir": "vendor/bin"
-    },
     "require": {
         "php": "^7.1",
         "ext-curl": "*",
-        "php-http/httplug": "^2.0",
-        "php-http/message-factory": "^1.0.2",
-        "php-http/message": "^1.2",
         "php-http/discovery": "^1.0",
+        "php-http/httplug": "^2.0",
+        "psr/http-client": "^1.0",
+        "psr/http-factory": "^1.0",
         "symfony/options-resolver": "^3.4 || ^4.0"
     },
     "require-dev": {
         "guzzlehttp/psr7": "^1.0",
         "php-http/client-integration-tests": "dev-master",
         "phpunit/phpunit": "^7.5",
-        "zendframework/zend-diactoros": "^1.0"
+        "zendframework/zend-diactoros": "^2.0"
     },
     "autoload": {
         "psr-4": {

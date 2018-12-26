@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Http\Client\Curl\Tests;
+namespace Http\Client\Curl\Tests\Functional;
 
 use Http\Client\Curl\Client;
-use Http\Client\HttpClient;
+use Http\Client\HttpAsyncClient;
 use Http\Message\MessageFactory\GuzzleMessageFactory;
 use Http\Message\StreamFactory\GuzzleStreamFactory;
 
@@ -15,9 +15,11 @@ use Http\Message\StreamFactory\GuzzleStreamFactory;
 class HttpAsyncClientGuzzleTest extends HttpAsyncClientTestCase
 {
     /**
-     * @return HttpClient
+     * Create asynchronious HTTP client for tests.
+     *
+     * @return HttpAsyncClient
      */
-    protected function createHttpAsyncClient()
+    protected function createHttpAsyncClient(): HttpAsyncClient
     {
         return new Client(new GuzzleMessageFactory(), new GuzzleStreamFactory());
     }

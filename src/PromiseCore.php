@@ -109,7 +109,7 @@ class PromiseCore
      *
      * @param callable $callback
      */
-    public function addOnFulfilled(callable $callback)
+    public function addOnFulfilled(callable $callback): void
     {
         if ($this->getState() === Promise::PENDING) {
             $this->onFulfilled[] = $callback;
@@ -126,7 +126,7 @@ class PromiseCore
      *
      * @param callable $callback
      */
-    public function addOnRejected(callable $callback)
+    public function addOnRejected(callable $callback): void
     {
         if ($this->getState() === Promise::PENDING) {
             $this->onRejected[] = $callback;
@@ -150,7 +150,7 @@ class PromiseCore
      *
      * @return string
      */
-    public function getState()
+    public function getState(): string
     {
         return $this->state;
     }
@@ -160,7 +160,7 @@ class PromiseCore
      *
      * @return RequestInterface
      */
-    public function getRequest()
+    public function getRequest(): RequestInterface
     {
         return $this->request;
     }
@@ -168,9 +168,9 @@ class PromiseCore
     /**
      * Return the value of the promise (fulfilled).
      *
-     * @return ResponseInterface Response Object only when the Promise is fulfilled
+     * @return ResponseInterface Response object only when the Promise is fulfilled
      */
-    public function getResponse()
+    public function getResponse(): ResponseInterface
     {
         return $this->responseBuilder->getResponse();
     }
@@ -181,11 +181,11 @@ class PromiseCore
      * If the exception is an instance of Http\Client\Exception\HttpException it will contain
      * the response object with the status code and the http reason.
      *
-     * @return Exception Exception Object only when the Promise is rejected
+     * @return \Throwable Exception Object only when the Promise is rejected
      *
      * @throws \LogicException When the promise is not rejected
      */
-    public function getException()
+    public function getException(): \Throwable
     {
         if (null === $this->exception) {
             throw new \LogicException('Promise is not rejected');
@@ -197,7 +197,7 @@ class PromiseCore
     /**
      * Fulfill promise.
      */
-    public function fulfill()
+    public function fulfill(): void
     {
         $this->state = Promise::FULFILLED;
         $response = $this->responseBuilder->getResponse();
@@ -225,7 +225,7 @@ class PromiseCore
      *
      * @param Exception $exception Reject reason
      */
-    public function reject(Exception $exception)
+    public function reject(Exception $exception): void
     {
         $this->exception = $exception;
         $this->state = Promise::REJECTED;

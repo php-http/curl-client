@@ -2,26 +2,26 @@
 
 declare(strict_types=1);
 
-namespace Http\Client\Curl\Tests;
+namespace Http\Client\Curl\Tests\Functional;
 
+use GuzzleHttp\Psr7\Stream;
 use Http\Client\Curl\Client;
 use Http\Client\HttpClient;
-use Http\Message\MessageFactory\DiactorosMessageFactory;
-use Http\Message\StreamFactory\DiactorosStreamFactory;
+use Http\Message\MessageFactory\GuzzleMessageFactory;
+use Http\Message\StreamFactory\GuzzleStreamFactory;
 use Psr\Http\Message\StreamInterface;
-use Zend\Diactoros\Stream;
 
 /**
  * Tests for Http\Client\Curl\Client.
  */
-class HttpClientDiactorosTest extends HttpClientTestCase
+class HttpClientGuzzleTest extends HttpClientTestCase
 {
     /**
      * @return HttpClient
      */
     protected function createHttpAdapter()
     {
-        return new Client(new DiactorosMessageFactory(), new DiactorosStreamFactory());
+        return new Client(new GuzzleMessageFactory(), new GuzzleStreamFactory());
     }
 
     /**
@@ -33,6 +33,6 @@ class HttpClientDiactorosTest extends HttpClientTestCase
      */
     protected function createFileStream($filename)
     {
-        return new Stream($filename);
+        return new Stream(fopen($filename, 'r'));
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Http\Client\Curl;
 
 use Http\Client\Exception;
@@ -7,11 +9,11 @@ use Http\Client\HttpAsyncClient;
 use Http\Client\HttpClient;
 use Http\Discovery\MessageFactoryDiscovery;
 use Http\Discovery\StreamFactoryDiscovery;
-use Http\Message\MessageFactory;
-use Http\Message\StreamFactory;
 use Http\Promise\Promise;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -35,16 +37,16 @@ class Client implements HttpClient, HttpAsyncClient
     private $options;
 
     /**
-     * PSR-7 message factory.
+     * PSR-17 response factory.
      *
-     * @var MessageFactory
+     * @var ResponseFactoryInterface
      */
-    private $messageFactory;
+    private $responseFactory;
 
     /**
-     * PSR-7 stream factory.
+     * PSR-17 stream factory.
      *
-     * @var StreamFactory
+     * @var StreamFactoryInterface
      */
     private $streamFactory;
 
@@ -53,37 +55,43 @@ class Client implements HttpClient, HttpAsyncClient
      *
      * @var resource|null
      */
-    private $handle = null;
+    private $handle;
 
     /**
      * Simultaneous requests runner.
      *
      * @var MultiRunner|null
      */
-    private $multiRunner = null;
+    private $multiRunner;
 
     /**
-     * @param MessageFactory|null $messageFactory HTTP Message factory
-     * @param StreamFactory|null  $streamFactory  HTTP Stream factory
-     * @param array               $options        cURL options {@link http://php.net/curl_setopt}
+     * Construct client.
+     *
+     * @param ResponseFactoryInterface|null $responseFactory PSR-17 HTTP response factory.
+     * @param StreamFactoryInterface|null   $streamFactory   PSR-17 HTTP stream factory.
+     * @param array                         $options         cURL options {@link http://php.net/curl_setopt}
      *
      * @throws \Http\Discovery\Exception\NotFoundException If factory discovery failed
      *
+     * @since x.x $messageFactory changed to PSR-17 ResponseFactoryInterface $responseFactory.
+     * @since x.x $streamFactory type changed to PSR-17 StreamFactoryInterface.
      * @since 1.0
      */
     public function __construct(
-        MessageFactory $messageFactory = null,
-        StreamFactory $streamFactory = null,
+        ResponseFactoryInterface $responseFactory = null,
+        StreamFactoryInterface $streamFactory = null,
         array $options = []
     ) {
-        $this->messageFactory = $messageFactory ?: MessageFactoryDiscovery::find();
-        $this->streamFactory = $streamFactory ?: StreamFactoryDiscovery::find();
+        $this->responseFactory = $responseFactory; // FIXME ?: MessageFactoryDiscovery::find();
+        $this->streamFactory = $streamFactory; // FIXME ?: StreamFactoryDiscovery::find();
         $resolver = new OptionsResolver();
-        $resolver->setDefaults([
-            CURLOPT_HEADER => false,
-            CURLOPT_RETURNTRANSFER => false,
-            CURLOPT_FOLLOWLOCATION => false,
-        ]);
+        $resolver->setDefaults(
+            [
+                CURLOPT_HEADER => false,
+                CURLOPT_RETURNTRANSFER => false,
+                CURLOPT_FOLLOWLOCATION => false,
+            ]
+        );
         $resolver->setAllowedValues(CURLOPT_HEADER, [false]); // our parsing will fail if this is set to true
         $resolver->setAllowedValues(CURLOPT_RETURNTRANSFER, [false]); // our parsing will fail if this is set to true
 
@@ -105,7 +113,7 @@ class Client implements HttpClient, HttpAsyncClient
     }
 
     /**
-     * Sends a PSR-7 request.
+     * Sends a PSR-7 request and returns a PSR-7 response.
      *
      * @param RequestInterface $request
      *
@@ -363,17 +371,14 @@ class Client implements HttpClient, HttpAsyncClient
      * Create new ResponseBuilder instance.
      *
      * @return ResponseBuilder
-     *
-     * @throws \RuntimeException If creating the stream from $body fails
      */
     private function createResponseBuilder(): ResponseBuilder
     {
-        try {
-            $body = $this->streamFactory->createStream(fopen('php://temp', 'w+b'));
-        } catch (\InvalidArgumentException $e) {
-            throw new \RuntimeException('Can not create "php://temp" stream.');
-        }
-        $response = $this->messageFactory->createResponse(200, null, [], $body);
+        $body = $this->streamFactory->createStreamFromFile('php://temp', 'w+b');
+
+        $response = $this->responseFactory
+            ->createResponse(200)
+            ->withBody($body);
 
         return new ResponseBuilder($response);
     }
