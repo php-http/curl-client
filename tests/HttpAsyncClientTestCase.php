@@ -17,11 +17,8 @@ abstract class HttpAsyncClientTestCase extends HttpAsyncClientTest
      */
     public function testAsyncSendRequest($method, $uri, array $headers, $body)
     {
-        if (defined('HHVM_VERSION')) {
-            static::markTestSkipped('This test can not run under HHVM');
-        }
         if (null !== $body && in_array($method, ['GET', 'HEAD', 'TRACE'], true)) {
-            static::markTestSkipped('cURL can not send body using '.$method);
+            static::markTestSkipped('cURL can not send body using ' . $method);
         }
         parent::testAsyncSendRequest(
             $method,
@@ -41,9 +38,6 @@ abstract class HttpAsyncClientTestCase extends HttpAsyncClientTest
         array $headers,
         $body
     ) {
-        if (defined('HHVM_VERSION')) {
-            static::markTestSkipped('This test can not run under HHVM');
-        }
         if (null !== $body) {
             static::markTestSkipped('cURL can not send body using GET');
         }
@@ -53,13 +47,5 @@ abstract class HttpAsyncClientTestCase extends HttpAsyncClientTest
             $headers,
             $body
         );
-    }
-
-    public function testSuccessiveCallMustUseResponseInterface()
-    {
-        if (defined('HHVM_VERSION')) {
-            static::markTestSkipped('This test can not run under HHVM');
-        }
-        parent::testSuccessiveCallMustUseResponseInterface();
     }
 }

@@ -6,6 +6,7 @@ namespace Http\Client\Curl\Tests;
 
 use Http\Client\Curl\CurlPromise;
 use Http\Client\Curl\MultiRunner;
+use Http\Client\Curl\PromiseCore;
 use Http\Client\Exception\TransferException;
 use Http\Promise\Promise;
 
@@ -21,10 +22,9 @@ class CurlPromiseTest extends BaseUnitTestCase
      */
     public function testCoreCalls()
     {
-        $core = $this->createPromiseCore();
-        $runner = $this->getMockBuilder(MultiRunner::class)->disableOriginalConstructor()
-            ->setMethods(['wait'])->getMock();
-        /** @var MultiRunner|\PHPUnit_Framework_MockObject_MockObject $runner */
+        $core = $this->createMock(PromiseCore::class);
+        $runner = $this->createMock(MultiRunner::class);
+
         $promise = new CurlPromise($core, $runner);
 
         $onFulfill = function () {
@@ -42,10 +42,9 @@ class CurlPromiseTest extends BaseUnitTestCase
 
     public function testCoreCallWaitFulfilled()
     {
-        $core = $this->createPromiseCore();
-        $runner = $this->getMockBuilder(MultiRunner::class)->disableOriginalConstructor()
-            ->setMethods(['wait'])->getMock();
-        /** @var MultiRunner|\PHPUnit_Framework_MockObject_MockObject $runner */
+        $core = $this->createMock(PromiseCore::class);
+        $runner = $this->createMock(MultiRunner::class);
+
         $promise = new CurlPromise($core, $runner);
 
         $runner->expects(static::once())->method('wait')->with($core);
@@ -56,9 +55,9 @@ class CurlPromiseTest extends BaseUnitTestCase
 
     public function testCoreCallWaitRejected()
     {
-        $core = $this->createPromiseCore();
-        $runner = $this->getMockBuilder(MultiRunner::class)->disableOriginalConstructor()->getMock();
-        /** @var MultiRunner|\PHPUnit_Framework_MockObject_MockObject $runner */
+        $core = $this->createMock(PromiseCore::class);
+        $runner = $this->createMock(MultiRunner::class);
+
         $promise = new CurlPromise($core, $runner);
 
         $runner->expects(static::once())->method('wait')->with($core);
