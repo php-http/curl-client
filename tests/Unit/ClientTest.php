@@ -25,7 +25,7 @@ class ClientTest extends TestCase
      */
     public function testExpectHeader(): void
     {
-        $client = $this->getMockBuilder(Client::class)->disableOriginalConstructor()->getMock();
+        $client = $this->createMock(Client::class);
 
         $createHeaders = new \ReflectionMethod(Client::class, 'createHeaders');
         $createHeaders->setAccessible(true);
@@ -59,7 +59,7 @@ class ClientTest extends TestCase
 
     public function testRewindStream(): void
     {
-        $client = $this->getMockBuilder(Client::class)->disableOriginalConstructor()->getMock();
+        $client = $this->createMock(Client::class);
 
         $bodyOptions = new \ReflectionMethod(Client::class, 'addRequestBodyOptions');
         $bodyOptions->setAccessible(true);
@@ -74,7 +74,7 @@ class ClientTest extends TestCase
 
     public function testRewindLargeStream(): void
     {
-        $client = $this->getMockBuilder(Client::class)->disableOriginalConstructor()->getMock();
+        $client = $this->createMock(Client::class);
 
         $bodyOptions = new \ReflectionMethod(Client::class, 'addRequestBodyOptions');
         $bodyOptions->setAccessible(true);
