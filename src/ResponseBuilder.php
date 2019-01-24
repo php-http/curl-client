@@ -17,7 +17,7 @@ class ResponseBuilder extends OriginalResponseBuilder
      *
      * @param ResponseInterface $response
      */
-    public function setResponse(ResponseInterface $response)
+    public function setResponse(ResponseInterface $response): void
     {
         $this->response = $response;
     }

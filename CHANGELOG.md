@@ -1,7 +1,8 @@
 # Change Log
 
-## Unreleased
+## 2.0.0 - Unreleased
 
+- Client expects PSR-17 ResponseFactoryInterface and StreamFactoryInterface rather than Httplug factories.
 - Allow cURL options to overwrite our default spec-compliant default configuration
 
 ## 1.7.1 - 2018-03-36

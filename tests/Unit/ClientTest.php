@@ -2,18 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Http\Client\Curl\Tests;
+namespace Http\Client\Curl\Tests\Unit;
 
 use Http\Client\Curl\Client;
-use Http\Message\MessageFactory;
-use Http\Message\StreamFactory;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Zend\Diactoros\Request;
 
 /**
- * Tests for Http\Client\Curl\Client.
- *
  * @covers \Http\Client\Curl\Client
  */
 class ClientTest extends TestCase
@@ -23,7 +21,7 @@ class ClientTest extends TestCase
      *
      * @link https://github.com/php-http/curl-client/issues/18
      */
-    public function testExpectHeader()
+    public function testExpectHeader(): void
     {
         $client = $this->createMock(Client::class);
 
@@ -42,7 +40,7 @@ class ClientTest extends TestCase
      *
      * @link https://github.com/php-http/curl-client/issues/18
      */
-    public function testWithNullPostFields()
+    public function testWithNullPostFields(): void
     {
         $client = $this->createMock(Client::class);
 
@@ -52,12 +50,12 @@ class ClientTest extends TestCase
         $request = new Request();
         $request = $request->withHeader('content-length', '0');
 
-        $headers = $createHeaders->invoke($client, $request, [CURLOPT_POSTFIELDS => null]);
+        $headers = $createHeaders->invoke($client, $request, [CURLOPT_POSTFIELDS => '']);
 
-        static::assertContains('content-length: 0', $headers);
+        self::assertContains('content-length: 0', $headers);
     }
 
-    public function testRewindStream()
+    public function testRewindStream(): void
     {
         $client = $this->createMock(Client::class);
 
@@ -72,7 +70,7 @@ class ClientTest extends TestCase
         static::assertEquals('abcdef', $options[CURLOPT_POSTFIELDS]);
     }
 
-    public function testRewindLargeStream()
+    public function testRewindLargeStream(): void
     {
         $client = $this->createMock(Client::class);
 
@@ -93,25 +91,18 @@ class ClientTest extends TestCase
         static::assertTrue(false !== strstr($options[CURLOPT_READFUNCTION](null, null, $length), 'abcdef'), 'Steam was not rewinded');
     }
 
-    public function testInvalidCurlOptions()
+    /**
+     * Tests throwing InvalidArgumentException when invalid cURL options passed to constructor.
+     */
+    public function testInvalidCurlOptions(): void
     {
         $this->expectException(InvalidOptionsException::class);
         new Client(
-            $this->createMock(MessageFactory::class),
-            $this->createMock(StreamFactory::class),
+            $this->createMock(ResponseFactoryInterface::class),
+            $this->createMock(StreamFactoryInterface::class),
             [
                 CURLOPT_HEADER => true, // this won't work with our client
             ]
         );
-    }
-
-    /**
-     * Discovery should be used if no factory given.
-     */
-    public function testFactoryDiscovery()
-    {
-        $client = new Client();
-
-        static::assertInstanceOf(Client::class, $client);
     }
 }

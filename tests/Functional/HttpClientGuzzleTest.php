@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Http\Client\Curl\Tests;
+namespace Http\Client\Curl\Tests\Functional;
 
 use GuzzleHttp\Psr7\Stream;
 use Http\Client\Curl\Client;
@@ -12,26 +12,22 @@ use Http\Message\StreamFactory\GuzzleStreamFactory;
 use Psr\Http\Message\StreamInterface;
 
 /**
- * Tests for Http\Client\Curl\Client.
+ * @covers \Http\Client\Curl\Client
  */
 class HttpClientGuzzleTest extends HttpClientTestCase
 {
     /**
-     * @return HttpClient
+     * {@inheritdoc}
      */
-    protected function createHttpAdapter()
+    protected function createHttpAdapter(): HttpClient
     {
         return new Client(new GuzzleMessageFactory(), new GuzzleStreamFactory());
     }
 
     /**
-     * Create stream from file.
-     *
-     * @param string $filename
-     *
-     * @return StreamInterface
+     * {@inheritdoc}
      */
-    protected function createFileStream($filename)
+    protected function createFileStream(string $filename): StreamInterface
     {
         return new Stream(fopen($filename, 'r'));
     }
