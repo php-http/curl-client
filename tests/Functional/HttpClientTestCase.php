@@ -20,9 +20,6 @@ abstract class HttpClientTestCase extends HttpClientTest
      */
     protected $tmpFiles = [];
 
-    /**
-     * Test sending large files.
-     */
     public function testSendLargeFile(): void
     {
         $filename = $this->createTempFile();
@@ -55,63 +52,46 @@ abstract class HttpClientTestCase extends HttpClientTest
     }
 
     /**
-     * TODO Summary.
-     *
-     * @param string $method  HTTP method.
-     * @param string $uri     Request URI.
-     * @param array  $headers HTTP headers.
-     * @param string $body    Request body.
+     * {@inheritdoc}
      *
      * @dataProvider requestProvider
      */
-    public function testSendRequest($method, $uri, array $headers, $body): void
+    public function testSendRequest($httpMethod, $uri, array $httpHeaders, $requestBody): void
     {
-        if ($body !== null && in_array($method, ['GET', 'HEAD', 'TRACE'], true)) {
-            self::markTestSkipped('cURL can not send body using '.$method);
+        if ($requestBody !== null && in_array($httpMethod, ['GET', 'HEAD', 'TRACE'], true)) {
+            self::markTestSkipped('cURL can not send body using '.$httpMethod);
         }
         parent::testSendRequest(
-            $method,
+            $httpMethod,
             $uri,
-            $headers,
-            $body
+            $httpHeaders,
+            $requestBody
         );
     }
 
     /**
-     * TODO Summary.
-     *
-     * @param array  $uriAndOutcome   TODO ???
-     * @param string $protocolVersion HTTP version.
-     * @param array  $headers         HTTP headers.
-     * @param string $body            Request body.
+     * {@inheritdoc}
      *
      * @dataProvider requestWithOutcomeProvider
      */
     public function testSendRequestWithOutcome(
         $uriAndOutcome,
-        $protocolVersion,
-        array $headers,
-        $body
+        $httpVersion,
+        array $httpHeaders,
+        $requestBody
     ): void {
-        if ($body !== null) {
+        if ($requestBody !== null) {
             self::markTestSkipped('cURL can not send body using GET');
         }
         parent::testSendRequestWithOutcome(
             $uriAndOutcome,
-            $protocolVersion,
-            $headers,
-            $body
+            $httpVersion,
+            $httpHeaders,
+            $requestBody
         );
     }
 
-    /**
-     * Create stream from file.
-     *
-     * @param string $filename
-     *
-     * @return StreamInterface
-     */
-    abstract protected function createFileStream($filename): StreamInterface;
+    abstract protected function createFileStream(string $filename): StreamInterface;
 
     /**
      * Create temporary file.
@@ -127,7 +107,7 @@ abstract class HttpClientTestCase extends HttpClientTest
     }
 
     /**
-     * Tears down the fixture.
+     * Delete files created with createTempFile
      */
     protected function tearDown()
     {

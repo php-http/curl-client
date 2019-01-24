@@ -12,8 +12,6 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Zend\Diactoros\Request;
 
 /**
- * Tests for Http\Client\Curl\Client.
- *
  * @covers \Http\Client\Curl\Client
  */
 class ClientTest extends TestCase

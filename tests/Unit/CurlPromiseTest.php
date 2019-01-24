@@ -13,15 +13,10 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Tests for Http\Client\Curl\CurlPromise.
- *
  * @covers \Http\Client\Curl\CurlPromise
  */
 class CurlPromiseTest extends TestCase
 {
-    /**
-     * TODO Summary
-     */
     public function testCoreCallWaitFulfilled(): void
     {
         $core = $this->createMock(PromiseCore::class);
@@ -38,9 +33,6 @@ class CurlPromiseTest extends TestCase
         self::assertSame($response, $promise->wait());
     }
 
-    /**
-     * TODO Summary
-     */
     public function testCoreCallWaitRejected(): void
     {
         $core = $this->createMock(PromiseCore::class);
@@ -59,9 +51,6 @@ class CurlPromiseTest extends TestCase
         }
     }
 
-    /**
-     * Test that promise call core methods.
-     */
     public function testCoreCalls(): void
     {
         $core = $this->createMock(PromiseCore::class);

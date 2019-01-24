@@ -12,52 +12,42 @@ use Http\Client\Tests\HttpAsyncClientTest;
 abstract class HttpAsyncClientTestCase extends HttpAsyncClientTest
 {
     /**
-     * TODO Summary.
-     *
-     * @param string $method  HTTP method.
-     * @param string $uri     Request URI.
-     * @param array  $headers HTTP headers.
-     * @param string $body    Request body.
+     * {@inheritdoc}
      *
      * @dataProvider requestProvider
      */
-    public function testAsyncSendRequest($method, $uri, array $headers, $body): void
+    public function testAsyncSendRequest($httpMethod, $uri, array $httpHeaders, $requestBody): void
     {
-        if ($body !== null && in_array($method, ['GET', 'HEAD', 'TRACE'], true)) {
-            self::markTestSkipped('cURL can not send body using '.$method);
+        if ($requestBody !== null && in_array($httpMethod, ['GET', 'HEAD', 'TRACE'], true)) {
+            self::markTestSkipped('cURL can not send body using '.$httpMethod);
         }
         parent::testAsyncSendRequest(
-            $method,
+            $httpMethod,
             $uri,
-            $headers,
-            $body
+            $httpHeaders,
+            $requestBody
         );
     }
 
     /**
-     * TODO Summary.
-     *
-     * @param array  $uriAndOutcome   TODO ???
-     * @param string $protocolVersion HTTP version.
-     * @param array  $headers         HTTP headers.
-     * @param string $body            Request body.
+     * {@inheritdoc}
      *
      * @dataProvider requestWithOutcomeProvider
      */
     public function testSendAsyncRequestWithOutcome(
         $uriAndOutcome,
-        $protocolVersion,
-        array $headers,
-        $body
+        $httpVersion,
+        array $httpHeaders,
+        $requestBody
     ): void {
-        if ( $body !== null) {
+        if ( $requestBody !== null) {
             self::markTestSkipped('cURL can not send body using GET');
         }
         parent::testSendAsyncRequestWithOutcome(
             $uriAndOutcome,
-            $protocolVersion,
-            $headers,
-            $body
+            $httpVersion,
+            $httpHeaders,
+            $requestBody
         );
     }
 }

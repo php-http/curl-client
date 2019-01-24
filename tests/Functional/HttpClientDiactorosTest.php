@@ -16,23 +16,11 @@ use Zend\Diactoros\StreamFactory;
  */
 class HttpClientDiactorosTest extends HttpClientTestCase
 {
-    /**
-     * Create stream from file.
-     *
-     * @param string $filename
-     *
-     * @return StreamInterface
-     */
-    protected function createFileStream($filename): StreamInterface
+    protected function createFileStream(string $filename): StreamInterface
     {
         return new Stream($filename);
     }
 
-    /**
-     * Create HTTP client for tests.
-     *
-     * @return HttpClient
-     */
     protected function createHttpAdapter(): HttpClient
     {
         return new Client(new ResponseFactory(), new StreamFactory());

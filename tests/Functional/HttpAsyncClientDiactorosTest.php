@@ -10,14 +10,12 @@ use Zend\Diactoros\ResponseFactory;
 use Zend\Diactoros\StreamFactory;
 
 /**
- * Testing asynchronous requests with Zend Diactoros factories.
+ * @covers \Http\Client\Curl\Client
  */
 class HttpAsyncClientDiactorosTest extends HttpAsyncClientTestCase
 {
     /**
-     * Create asynchronous HTTP client for tests.
-     *
-     * @return HttpAsyncClient
+     * {@inheritdoc}
      */
     protected function createHttpAsyncClient(): HttpAsyncClient
     {

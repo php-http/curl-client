@@ -7,9 +7,7 @@ namespace Http\Client\Curl;
 use Http\Client\Exception;
 use Http\Client\HttpAsyncClient;
 use Http\Client\HttpClient;
-use Http\Discovery\MessageFactoryDiscovery;
-use Http\Discovery\StreamFactoryDiscovery;
-use Http\Promise\Promise;
+use Http\Discovery\Psr17FactoryDiscovery;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -17,7 +15,7 @@ use Psr\Http\Message\StreamFactoryInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * PSR-7 compatible cURL based HTTP client.
+ * PSR-18 and HTTPlug Async client based on lib-curl.
  *
  * @license http://opensource.org/licenses/MIT MIT
  * @author  Михаил Красильников <m.krasilnikov@yandex.ru>
@@ -34,7 +32,7 @@ class Client implements HttpClient, HttpAsyncClient
      *
      * @var array
      */
-    private $options;
+    private $curlOptions;
 
     /**
      * PSR-17 response factory.
@@ -65,25 +63,19 @@ class Client implements HttpClient, HttpAsyncClient
     private $multiRunner;
 
     /**
-     * Construct client.
-     *
      * @param ResponseFactoryInterface|null $responseFactory PSR-17 HTTP response factory.
      * @param StreamFactoryInterface|null   $streamFactory   PSR-17 HTTP stream factory.
      * @param array                         $options         cURL options {@link http://php.net/curl_setopt}
      *
      * @throws \Http\Discovery\Exception\NotFoundException If factory discovery failed
-     *
-     * @since x.x $messageFactory changed to PSR-17 ResponseFactoryInterface $responseFactory.
-     * @since x.x $streamFactory type changed to PSR-17 StreamFactoryInterface.
-     * @since 1.0
      */
     public function __construct(
         ResponseFactoryInterface $responseFactory = null,
         StreamFactoryInterface $streamFactory = null,
         array $options = []
     ) {
-        $this->responseFactory = $responseFactory; // FIXME ?: MessageFactoryDiscovery::find();
-        $this->streamFactory = $streamFactory; // FIXME ?: StreamFactoryDiscovery::find();
+        $this->responseFactory = $responseFactory ?: Psr17FactoryDiscovery::findResponseFactory();
+        $this->streamFactory = $streamFactory ?: Psr17FactoryDiscovery::findStreamFactory();
         $resolver = new OptionsResolver();
         $resolver->setDefaults(
             [
@@ -99,7 +91,7 @@ class Client implements HttpClient, HttpAsyncClient
         // Make sure that we accept everything that is in the options.
         $resolver->setDefined(array_keys($options));
 
-        $this->options = $resolver->resolve($options);
+        $this->curlOptions = $resolver->resolve($options);
     }
 
     /**
@@ -113,11 +105,7 @@ class Client implements HttpClient, HttpAsyncClient
     }
 
     /**
-     * Sends a PSR-7 request and returns a PSR-7 response.
-     *
-     * @param RequestInterface $request
-     *
-     * @return ResponseInterface
+     * {@inheritdoc}
      *
      * @throws \Http\Client\Exception\NetworkException In case of network problems
      * @throws \Http\Client\Exception\RequestException On invalid request
@@ -164,11 +152,7 @@ class Client implements HttpClient, HttpAsyncClient
     }
 
     /**
-     * Sends a PSR-7 request in an asynchronous way.
-     *
-     * @param RequestInterface $request
-     *
-     * @return Promise
+     * {@inheritdoc}
      *
      * @throws \Http\Client\Exception\RequestException On invalid request
      * @throws \InvalidArgumentException               For invalid header names or values
@@ -198,36 +182,31 @@ class Client implements HttpClient, HttpAsyncClient
     /**
      * Update cURL options for this request and hook in the response builder.
      *
-     * @param RequestInterface $request
-     * @param ResponseBuilder  $responseBuilder
-     *
      * @throws \Http\Client\Exception\RequestException On invalid request
      * @throws \InvalidArgumentException               For invalid header names or values
      * @throws \RuntimeException                       If can not read body
-     *
-     * @return array
      */
-    private function prepareRequestOptions(RequestInterface $request, ResponseBuilder $responseBuilder)
+    private function prepareRequestOptions(RequestInterface $request, ResponseBuilder $responseBuilder): array
     {
-        $options = $this->options;
+        $curlOptions = $this->curlOptions;
 
         try {
-            $options[CURLOPT_HTTP_VERSION]
+            $curlOptions[CURLOPT_HTTP_VERSION]
                 = $this->getProtocolVersion($request->getProtocolVersion());
         } catch (\UnexpectedValueException $e) {
             throw new Exception\RequestException($e->getMessage(), $request);
         }
-        $options[CURLOPT_URL] = (string) $request->getUri();
+        $curlOptions[CURLOPT_URL] = (string) $request->getUri();
 
-        $options = $this->addRequestBodyOptions($request, $options);
+        $curlOptions = $this->addRequestBodyOptions($request, $curlOptions);
 
-        $options[CURLOPT_HTTPHEADER] = $this->createHeaders($request, $options);
+        $curlOptions[CURLOPT_HTTPHEADER] = $this->createHeaders($request, $curlOptions);
 
         if ($request->getUri()->getUserInfo()) {
-            $options[CURLOPT_USERPWD] = $request->getUri()->getUserInfo();
+            $curlOptions[CURLOPT_USERPWD] = $request->getUri()->getUserInfo();
         }
 
-        $options[CURLOPT_HEADERFUNCTION] = function ($ch, $data) use ($responseBuilder) {
+        $curlOptions[CURLOPT_HEADERFUNCTION] = function ($ch, $data) use ($responseBuilder) {
             $str = trim($data);
             if ('' !== $str) {
                 if (strpos(strtolower($str), 'http/') === 0) {
@@ -240,21 +219,17 @@ class Client implements HttpClient, HttpAsyncClient
             return strlen($data);
         };
 
-        $options[CURLOPT_WRITEFUNCTION] = function ($ch, $data) use ($responseBuilder) {
+        $curlOptions[CURLOPT_WRITEFUNCTION] = function ($ch, $data) use ($responseBuilder) {
             return $responseBuilder->getResponse()->getBody()->write($data);
         };
 
-        return $options;
+        return $curlOptions;
     }
 
     /**
      * Return cURL constant for specified HTTP version.
      *
-     * @param string $requestVersion
-     *
      * @throws \UnexpectedValueException If unsupported version requested
-     *
-     * @return int
      */
     private function getProtocolVersion(string $requestVersion): int
     {
@@ -275,13 +250,8 @@ class Client implements HttpClient, HttpAsyncClient
 
     /**
      * Add request body related cURL options.
-     *
-     * @param RequestInterface $request
-     * @param array            $options
-     *
-     * @return array
      */
-    private function addRequestBodyOptions(RequestInterface $request, array $options): array
+    private function addRequestBodyOptions(RequestInterface $request, array $curlOptions): array
     {
         /*
          * Some HTTP methods cannot have payload:
@@ -302,40 +272,37 @@ class Client implements HttpClient, HttpAsyncClient
                 // Message has non empty body.
                 if (null === $bodySize || $bodySize > 1024 * 1024) {
                     // Avoid full loading large or unknown size body into memory
-                    $options[CURLOPT_UPLOAD] = true;
+                    $curlOptions[CURLOPT_UPLOAD] = true;
                     if (null !== $bodySize) {
-                        $options[CURLOPT_INFILESIZE] = $bodySize;
+                        $curlOptions[CURLOPT_INFILESIZE] = $bodySize;
                     }
-                    $options[CURLOPT_READFUNCTION] = function ($ch, $fd, $length) use ($body) {
+                    $curlOptions[CURLOPT_READFUNCTION] = function ($ch, $fd, $length) use ($body) {
                         return $body->read($length);
                     };
                 } else {
                     // Small body can be loaded into memory
-                    $options[CURLOPT_POSTFIELDS] = (string) $body;
+                    $curlOptions[CURLOPT_POSTFIELDS] = (string) $body;
                 }
             }
         }
 
         if ($request->getMethod() === 'HEAD') {
             // This will set HTTP method to "HEAD".
-            $options[CURLOPT_NOBODY] = true;
+            $curlOptions[CURLOPT_NOBODY] = true;
         } elseif ($request->getMethod() !== 'GET') {
             // GET is a default method. Other methods should be specified explicitly.
-            $options[CURLOPT_CUSTOMREQUEST] = $request->getMethod();
+            $curlOptions[CURLOPT_CUSTOMREQUEST] = $request->getMethod();
         }
 
-        return $options;
+        return $curlOptions;
     }
 
     /**
      * Create headers array for CURLOPT_HTTPHEADER.
      *
-     * @param RequestInterface $request
-     * @param array            $options cURL options
-     *
      * @return string[]
      */
-    private function createHeaders(RequestInterface $request, array $options): array
+    private function createHeaders(RequestInterface $request, array $curlOptions): array
     {
         $curlHeaders = [];
         $headers = $request->getHeaders();
@@ -346,10 +313,10 @@ class Client implements HttpClient, HttpAsyncClient
                 continue;
             }
             if ('content-length' === $header) {
-                if (array_key_exists(CURLOPT_POSTFIELDS, $options)) {
+                if (array_key_exists(CURLOPT_POSTFIELDS, $curlOptions)) {
                     // Small body content length can be calculated here.
-                    $values = [strlen($options[CURLOPT_POSTFIELDS])];
-                } elseif (!array_key_exists(CURLOPT_READFUNCTION, $options)) {
+                    $values = [strlen($curlOptions[CURLOPT_POSTFIELDS])];
+                } elseif (!array_key_exists(CURLOPT_READFUNCTION, $curlOptions)) {
                     // Else if there is no body, forcing "Content-length" to 0
                     $values = [0];
                 }
@@ -367,11 +334,6 @@ class Client implements HttpClient, HttpAsyncClient
         return $curlHeaders;
     }
 
-    /**
-     * Create new ResponseBuilder instance.
-     *
-     * @return ResponseBuilder
-     */
     private function createResponseBuilder(): ResponseBuilder
     {
         $body = $this->streamFactory->createStreamFromFile('php://temp', 'w+b');

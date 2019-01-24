@@ -10,14 +10,12 @@ use Http\Message\MessageFactory\GuzzleMessageFactory;
 use Http\Message\StreamFactory\GuzzleStreamFactory;
 
 /**
- * Tests for Http\Client\Curl\Client.
+ * @covers \Http\Client\Curl\Client
  */
 class HttpAsyncClientGuzzleTest extends HttpAsyncClientTestCase
 {
     /**
-     * Create asynchronious HTTP client for tests.
-     *
-     * @return HttpAsyncClient
+     * {@inheritdoc}
      */
     protected function createHttpAsyncClient(): HttpAsyncClient
     {

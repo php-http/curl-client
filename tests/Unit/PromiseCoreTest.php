@@ -16,8 +16,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
 /**
- * Tests for Http\Client\Curl\PromiseCore.
- *
  * @covers \Http\Client\Curl\PromiseCore
  */
 class PromiseCoreTest extends TestCase
@@ -87,9 +85,6 @@ class PromiseCoreTest extends TestCase
         self::assertEquals('Bar', $core->getException()->getMessage());
     }
 
-    /**
-     * @expectedException \LogicException
-     */
     public function testNotRejected(): void
     {
         $request = $this->createMock(RequestInterface::class);
@@ -98,12 +93,10 @@ class PromiseCoreTest extends TestCase
         $this->handle = curl_init();
 
         $core = new PromiseCore($request, $this->handle, $responseBuilder);
+        $this->expectException(\LogicException::class);
         $core->getException();
     }
 
-    /**
-     * Test on fulfill actions.
-     */
     public function testOnFulfill(): void
     {
         $request = $this->createMock(RequestInterface::class);
@@ -132,9 +125,6 @@ class PromiseCoreTest extends TestCase
         self::assertEquals(Promise::FULFILLED, $core->getState());
     }
 
-    /**
-     * Test on reject actions.
-     */
     public function testOnReject(): void
     {
         $request = $this->createMock(RequestInterface::class);
@@ -162,9 +152,6 @@ class PromiseCoreTest extends TestCase
         self::assertEquals('Bar', $core->getException()->getMessage());
     }
 
-    /**
-     * Tears down the fixture.
-     */
     protected function tearDown()
     {
         if (is_resource($this->handle)) {
