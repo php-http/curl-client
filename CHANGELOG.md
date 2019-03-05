@@ -8,10 +8,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 2.0.0 - 2019-03-05
 
-- Client expects PSR-17 ResponseFactoryInterface and StreamFactoryInterface rather than Httplug
-  factories.
-- Allow cURL options to overwrite our default spec-compliant default configuration.
-
 ### Removed
 
 - HHVM support removed.
