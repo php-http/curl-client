@@ -15,6 +15,11 @@ use Http\Client\Exception\RequestException;
 class MultiRunner
 {
     /**
+     * Timeout for curl_multi_select in seconds.
+     */
+    private const SELECT_TIMEOUT = 0.1;
+
+    /**
      * cURL multi handle.
      *
      * @var resource|null
@@ -84,8 +89,16 @@ class MultiRunner
     public function wait(PromiseCore $targetCore = null): void
     {
         do {
-            $status = curl_multi_exec($this->multiHandle, $active);
-            curl_multi_select($this->multiHandle, 0.1);
+            if (curl_multi_select($this->multiHandle, self::SELECT_TIMEOUT) === -1) {
+                // See https://bugs.php.net/bug.php?id=61141
+                usleep(250);
+            }
+
+            do {
+                $status = curl_multi_exec($this->multiHandle, $active);
+                // TODO CURLM_CALL_MULTI_PERFORM never returned since cURL 7.20.
+            } while ($status === CURLM_CALL_MULTI_PERFORM);
+
             $info = curl_multi_info_read($this->multiHandle);
             if ($info !== false) {
                 $core = $this->findCoreByHandle($info['handle']);
@@ -96,7 +109,7 @@ class MultiRunner
                     continue;
                 }
 
-                if ($info['result'] === CURLE_OK) {
+                if ($info['result'] === CURLM_OK) {
                     $core->fulfill();
                 } else {
                     $error = curl_error($core->getHandle());
@@ -109,7 +122,7 @@ class MultiRunner
                     return;
                 }
             }
-        } while ($status === CURLM_CALL_MULTI_PERFORM || $active);
+        } while ($active);
     }
 
     /**

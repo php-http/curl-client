@@ -16,6 +16,9 @@
     ],
     "prefer-stable": true,
     "minimum-stability": "dev",
+    "config": {
+        "secure-http": true
+    },
     "require": {
         "php": "^7.1",
         "ext-curl": "*",
@@ -30,7 +33,8 @@
         "guzzlehttp/psr7": "^1.0",
         "php-http/client-integration-tests": "^2.0",
         "phpunit/phpunit": "^7.5",
-        "zendframework/zend-diactoros": "^2.0"
+        "zendframework/zend-diactoros": "^2.0",
+        "donatj/mock-webserver": "^2.0"
     },
     "autoload": {
         "psr-4": {
