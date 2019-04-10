@@ -85,17 +85,18 @@ class MultiRunner
     {
         do {
             $status = curl_multi_exec($this->multiHandle, $active);
+            curl_multi_select($this->multiHandle, 0.1);
             $info = curl_multi_info_read($this->multiHandle);
-            if (false !== $info) {
+            if ($info !== false) {
                 $core = $this->findCoreByHandle($info['handle']);
 
-                if (null === $core) {
+                if ($core === null) {
                     // We have no promise for this handle. Drop it.
                     curl_multi_remove_handle($this->multiHandle, $info['handle']);
                     continue;
                 }
 
-                if (CURLE_OK === $info['result']) {
+                if ($info['result'] === CURLE_OK) {
                     $core->fulfill();
                 } else {
                     $error = curl_error($core->getHandle());
