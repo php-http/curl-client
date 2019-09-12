@@ -44,7 +44,8 @@
     },
     "provide": {
         "php-http/client-implementation": "1.0",
-        "php-http/async-client-implementation": "1.0"
+        "php-http/async-client-implementation": "1.0",
+        "psr/http-client-implementation": "1.0"
     },
     "scripts": {
         "test": "vendor/bin/phpunit",
