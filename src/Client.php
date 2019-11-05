@@ -15,6 +15,7 @@ use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use const CURLOPT_CUSTOMREQUEST;
 
 /**
  * PSR-18 and HTTPlug Async client based on lib-curl.
@@ -278,15 +279,8 @@ class Client implements HttpClient, HttpAsyncClient
      */
     private function addRequestBodyOptions(RequestInterface $request, array $curlOptions): array
     {
-        /*
-         * Some HTTP methods cannot have payload:
-         *
-         * - GET — cURL will automatically change method to PUT or POST if we set CURLOPT_UPLOAD or
-         *   CURLOPT_POSTFIELDS.
-         * - HEAD — cURL treats HEAD as GET request with a same restrictions.
-         * - TRACE — According to RFC7231: a client MUST NOT send a message body in a TRACE request.
-         */
-        if (!in_array($request->getMethod(), ['GET', 'HEAD', 'TRACE'], true)) {
+        // According to RFC7231: a client MUST NOT send a message body in a TRACE request.
+        if ($request->getMethod() !== 'TRACE') {
             $body = $request->getBody();
             $bodySize = $body->getSize();
             if ($bodySize !== 0) {
@@ -308,6 +302,10 @@ class Client implements HttpClient, HttpAsyncClient
                     // Small body can be loaded into memory
                     $curlOptions[CURLOPT_POSTFIELDS] = (string)$body;
                 }
+
+                $curlOptions[CURLOPT_CUSTOMREQUEST] = $request->getMethod();
+
+                return $curlOptions;
             }
         }
 

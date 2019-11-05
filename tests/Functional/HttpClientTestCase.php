@@ -51,46 +51,6 @@ abstract class HttpClientTestCase extends HttpClientTest
         self::assertEquals($body->getSize(), $request['SERVER']['HTTP_CONTENT_LENGTH']);
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @dataProvider requestProvider
-     */
-    public function testSendRequest($httpMethod, $uri, array $httpHeaders, $requestBody): void
-    {
-        if ($requestBody !== null && in_array($httpMethod, ['GET', 'HEAD', 'TRACE'], true)) {
-            self::markTestSkipped('cURL can not send body using '.$httpMethod);
-        }
-        parent::testSendRequest(
-            $httpMethod,
-            $uri,
-            $httpHeaders,
-            $requestBody
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @dataProvider requestWithOutcomeProvider
-     */
-    public function testSendRequestWithOutcome(
-        $uriAndOutcome,
-        $httpVersion,
-        array $httpHeaders,
-        $requestBody
-    ): void {
-        if ($requestBody !== null) {
-            self::markTestSkipped('cURL can not send body using GET');
-        }
-        parent::testSendRequestWithOutcome(
-            $uriAndOutcome,
-            $httpVersion,
-            $httpHeaders,
-            $requestBody
-        );
-    }
-
     abstract protected function createFileStream(string $filename): StreamInterface;
 
     /**
