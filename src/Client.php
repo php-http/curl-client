@@ -94,13 +94,13 @@ class Client implements HttpClient, HttpAsyncClient
 
         // Our parsing will fail if this is set to true.
         $resolver->setAllowedValues(
-            CURLOPT_HEADER,
+            (string)CURLOPT_HEADER,
             [false]
         );
 
         // Our parsing will fail if this is set to true.
         $resolver->setAllowedValues(
-            CURLOPT_RETURNTRANSFER,
+            (string)CURLOPT_RETURNTRANSFER,
             [false]
         );
 
