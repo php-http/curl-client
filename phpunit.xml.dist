@@ -23,6 +23,10 @@
             <directory>tests/Unit</directory>
         </testsuite>
 
+        <testsuite name="Integration">
+            <directory>tests/Integration</directory>
+        </testsuite>
+
         <testsuite name="Functional">
             <directory>tests/Functional</directory>
             <!-- Exclude till https://github.com/php-http/message/issues/105 resolved. -->
