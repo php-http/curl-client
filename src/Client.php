@@ -15,7 +15,6 @@ use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use const CURLOPT_CUSTOMREQUEST;
 
 /**
  * PSR-18 and HTTPlug Async client based on lib-curl.
@@ -279,42 +278,39 @@ class Client implements HttpClient, HttpAsyncClient
      */
     private function addRequestBodyOptions(RequestInterface $request, array $curlOptions): array
     {
-        // According to RFC7231: a client MUST NOT send a message body in a TRACE request.
-        if ($request->getMethod() !== 'TRACE') {
-            $body = $request->getBody();
-            $bodySize = $body->getSize();
-            if ($bodySize !== 0) {
-                if ($body->isSeekable()) {
-                    $body->rewind();
-                }
+        $body = $request->getBody();
+        $bodySize = $body->getSize();
 
-                // Message has non empty body.
-                if (null === $bodySize || $bodySize > 1024 * 1024) {
-                    // Avoid full loading large or unknown size body into memory
-                    $curlOptions[CURLOPT_UPLOAD] = true;
-                    if (null !== $bodySize) {
-                        $curlOptions[CURLOPT_INFILESIZE] = $bodySize;
-                    }
-                    $curlOptions[CURLOPT_READFUNCTION] = function ($ch, $fd, $length) use ($body) {
-                        return $body->read($length);
-                    };
-                } else {
-                    // Small body can be loaded into memory
-                    $curlOptions[CURLOPT_POSTFIELDS] = (string)$body;
-                }
+        if ($bodySize === 0 && $request->getMethod() === 'HEAD') {
+            $curlOptions[CURLOPT_NOBODY] = true;
 
-                $curlOptions[CURLOPT_CUSTOMREQUEST] = $request->getMethod();
-
-                return $curlOptions;
-            }
+            return $curlOptions;
         }
 
-        if ($request->getMethod() === 'HEAD') {
-            // This will set HTTP method to "HEAD".
-            $curlOptions[CURLOPT_NOBODY] = true;
-        } elseif ($request->getMethod() !== 'GET') {
-            // GET is a default method. Other methods should be specified explicitly.
-            $curlOptions[CURLOPT_CUSTOMREQUEST] = $request->getMethod();
+        $curlOptions[CURLOPT_CUSTOMREQUEST] = $request->getMethod();
+
+        // According to RFC7231: a client MUST NOT send a message body in a TRACE request.
+        if ($bodySize === 0 || $request->getMethod() === 'TRACE') {
+            return $curlOptions;
+        }
+
+        if ($body->isSeekable()) {
+            $body->rewind();
+        }
+
+        // Message has non empty body.
+        if (null === $bodySize || $bodySize > 1024 * 1024) {
+            // Avoid full loading large or unknown size body into memory
+            $curlOptions[CURLOPT_UPLOAD] = true;
+            if (null !== $bodySize) {
+                $curlOptions[CURLOPT_INFILESIZE] = $bodySize;
+            }
+            $curlOptions[CURLOPT_READFUNCTION] = function ($ch, $fd, $length) use ($body) {
+                return $body->read($length);
+            };
+        } else {
+            // Small body can be loaded into memory
+            $curlOptions[CURLOPT_POSTFIELDS] = (string)$body;
         }
 
         return $curlOptions;
