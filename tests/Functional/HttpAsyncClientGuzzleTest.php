@@ -6,13 +6,14 @@ namespace Http\Client\Curl\Tests\Functional;
 
 use Http\Client\Curl\Client;
 use Http\Client\HttpAsyncClient;
+use Http\Client\Tests\HttpAsyncClientTest;
 use Http\Message\MessageFactory\GuzzleMessageFactory;
 use Http\Message\StreamFactory\GuzzleStreamFactory;
 
 /**
  * @covers \Http\Client\Curl\Client
  */
-class HttpAsyncClientGuzzleTest extends HttpAsyncClientTestCase
+class HttpAsyncClientGuzzleTest extends HttpAsyncClientTest
 {
     /**
      * {@inheritdoc}

@@ -278,45 +278,39 @@ class Client implements HttpClient, HttpAsyncClient
      */
     private function addRequestBodyOptions(RequestInterface $request, array $curlOptions): array
     {
-        /*
-         * Some HTTP methods cannot have payload:
-         *
-         * - GET — cURL will automatically change method to PUT or POST if we set CURLOPT_UPLOAD or
-         *   CURLOPT_POSTFIELDS.
-         * - HEAD — cURL treats HEAD as GET request with a same restrictions.
-         * - TRACE — According to RFC7231: a client MUST NOT send a message body in a TRACE request.
-         */
-        if (!in_array($request->getMethod(), ['GET', 'HEAD', 'TRACE'], true)) {
-            $body = $request->getBody();
-            $bodySize = $body->getSize();
-            if ($bodySize !== 0) {
-                if ($body->isSeekable()) {
-                    $body->rewind();
-                }
+        $body = $request->getBody();
+        $bodySize = $body->getSize();
 
-                // Message has non empty body.
-                if (null === $bodySize || $bodySize > 1024 * 1024) {
-                    // Avoid full loading large or unknown size body into memory
-                    $curlOptions[CURLOPT_UPLOAD] = true;
-                    if (null !== $bodySize) {
-                        $curlOptions[CURLOPT_INFILESIZE] = $bodySize;
-                    }
-                    $curlOptions[CURLOPT_READFUNCTION] = function ($ch, $fd, $length) use ($body) {
-                        return $body->read($length);
-                    };
-                } else {
-                    // Small body can be loaded into memory
-                    $curlOptions[CURLOPT_POSTFIELDS] = (string)$body;
-                }
-            }
+        if ($bodySize === 0 && $request->getMethod() === 'HEAD') {
+            $curlOptions[CURLOPT_NOBODY] = true;
+
+            return $curlOptions;
         }
 
-        if ($request->getMethod() === 'HEAD') {
-            // This will set HTTP method to "HEAD".
-            $curlOptions[CURLOPT_NOBODY] = true;
-        } elseif ($request->getMethod() !== 'GET') {
-            // GET is a default method. Other methods should be specified explicitly.
-            $curlOptions[CURLOPT_CUSTOMREQUEST] = $request->getMethod();
+        $curlOptions[CURLOPT_CUSTOMREQUEST] = $request->getMethod();
+
+        // According to RFC7231: a client MUST NOT send a message body in a TRACE request.
+        if ($bodySize === 0 || $request->getMethod() === 'TRACE') {
+            return $curlOptions;
+        }
+
+        if ($body->isSeekable()) {
+            $body->rewind();
+        }
+
+        // Message has non empty body.
+        if (null === $bodySize || $bodySize > 1024 * 1024) {
+            // Avoid full loading large or unknown size body into memory
+            $curlOptions[CURLOPT_UPLOAD] = true;
+            if (null !== $bodySize) {
+                $curlOptions[CURLOPT_INFILESIZE] = $bodySize;
+            }
+            $curlOptions[CURLOPT_READFUNCTION] = function ($ch, $fd, $length) use ($body) {
+                return $body->read($length);
+            };
+        } else {
+            // Small body can be loaded into memory
+            $curlOptions[CURLOPT_POSTFIELDS] = (string)$body;
         }
 
         return $curlOptions;
