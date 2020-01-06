@@ -7,12 +7,12 @@ namespace Http\Client\Curl\Tests\Functional;
 use Http\Client\Curl\Client;
 use Http\Client\HttpClient;
 use Psr\Http\Message\StreamInterface;
-use Zend\Diactoros\ResponseFactory;
-use Zend\Diactoros\Stream;
-use Zend\Diactoros\StreamFactory;
+use Laminas\Diactoros\ResponseFactory;
+use Laminas\Diactoros\Stream;
+use Laminas\Diactoros\StreamFactory;
 
 /**
- * Testing synchronous requests with Zend Diactoros factories.
+ * Testing synchronous requests with Laminas Diactoros factories.
  */
 class HttpClientDiactorosTest extends HttpClientTestCase
 {

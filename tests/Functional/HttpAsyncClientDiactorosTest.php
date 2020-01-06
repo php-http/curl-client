@@ -6,8 +6,8 @@ namespace Http\Client\Curl\Tests\Functional;
 
 use Http\Client\Curl\Client;
 use Http\Client\HttpAsyncClient;
-use Zend\Diactoros\ResponseFactory;
-use Zend\Diactoros\StreamFactory;
+use Laminas\Diactoros\ResponseFactory;
+use Laminas\Diactoros\StreamFactory;
 
 /**
  * @covers \Http\Client\Curl\Client
