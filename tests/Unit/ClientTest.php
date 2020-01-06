@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
-use Zend\Diactoros\Request;
+use Laminas\Diactoros\Request;
 
 /**
  * @covers \Http\Client\Curl\Client
