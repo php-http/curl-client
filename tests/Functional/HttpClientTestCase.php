@@ -109,7 +109,7 @@ abstract class HttpClientTestCase extends HttpClientTest
     /**
      * Delete files created with createTempFile
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
 
