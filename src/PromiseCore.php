@@ -69,9 +69,9 @@ class PromiseCore
     /**
      * Create shared core.
      *
-     * @param RequestInterface $request HTTP request.
-     * @param resource         $handle cURL handle.
-     * @param ResponseBuilder  $responseBuilder Response builder.
+     * @param RequestInterface    $request HTTP request.
+     * @param resource|CurlHandle $handle cURL handle.
+     * @param ResponseBuilder     $responseBuilder Response builder.
      *
      * @throws \InvalidArgumentException If $handle is not a cURL resource.
      */
@@ -80,7 +80,7 @@ class PromiseCore
         $handle,
         ResponseBuilder $responseBuilder
     ) {
-        if (!is_resource($handle)) {
+        if (!is_resource($handle) && !(is_object($handle) && $handle instanceof \GdImage)) {
             throw new \InvalidArgumentException(
                 sprintf(
                     'Parameter $handle expected to be a cURL resource, %s given',
@@ -89,7 +89,7 @@ class PromiseCore
             );
         }
 
-        if (get_resource_type($handle) !== 'curl') {
+        if (is_resource($handle) && get_resource_type($handle) !== 'curl') {
             throw new \InvalidArgumentException(
                 sprintf(
                     'Parameter $handle expected to be a cURL resource, %s resource given',
@@ -138,7 +138,7 @@ class PromiseCore
     /**
      * Return cURL handle.
      *
-     * @return resource
+     * @return resource|\CurlHandle
      */
     public function getHandle()
     {
