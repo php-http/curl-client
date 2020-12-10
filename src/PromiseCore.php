@@ -69,9 +69,9 @@ class PromiseCore
     /**
      * Create shared core.
      *
-     * @param RequestInterface $request HTTP request.
-     * @param resource         $handle cURL handle.
-     * @param ResponseBuilder  $responseBuilder Response builder.
+     * @param RequestInterface     $request HTTP request.
+     * @param resource|\CurlHandle $handle cURL handle.
+     * @param ResponseBuilder      $responseBuilder Response builder.
      *
      * @throws \InvalidArgumentException If $handle is not a cURL resource.
      */
@@ -80,7 +80,7 @@ class PromiseCore
         $handle,
         ResponseBuilder $responseBuilder
     ) {
-        if (!is_resource($handle)) {
+        if (PHP_MAJOR_VERSION === 7 && !is_resource($handle)) {
             throw new \InvalidArgumentException(
                 sprintf(
                     'Parameter $handle expected to be a cURL resource, %s given',
@@ -89,11 +89,20 @@ class PromiseCore
             );
         }
 
-        if (get_resource_type($handle) !== 'curl') {
+        if (PHP_MAJOR_VERSION > 7 && !$handle instanceof \CurlHandle) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Parameter $handle expected to be a cURL resource, %s given',
+                    get_debug_type($handle)
+                )
+            );
+        }
+
+        if (is_resource($handle) && get_resource_type($handle) !== 'curl') {
             throw new \InvalidArgumentException(
                 sprintf(
                     'Parameter $handle expected to be a cURL resource, %s resource given',
-                    get_resource_type($handle)
+                    get_resource_type($handle) ?? get_debug_type($handle)
                 )
             );
         }
@@ -138,7 +147,7 @@ class PromiseCore
     /**
      * Return cURL handle.
      *
-     * @return resource
+     * @return resource|\CurlHandle
      */
     public function getHandle()
     {

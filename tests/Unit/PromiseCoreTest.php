@@ -36,7 +36,11 @@ class PromiseCoreTest extends TestCase
         $responseBuilder = $this->createMock(ResponseBuilder::class);
 
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Parameter $handle expected to be a cURL resource, stream resource given');
+        if (PHP_MAJOR_VERSION > 7) {
+            $this->expectExceptionMessage('Parameter $handle expected to be a cURL resource, resource (stream) given');
+        } else {
+            $this->expectExceptionMessage('Parameter $handle expected to be a cURL resource, stream resource given');
+        }
 
         new PromiseCore($request, fopen('php://memory', 'r+b'), $responseBuilder);
     }
@@ -50,7 +54,11 @@ class PromiseCoreTest extends TestCase
         $responseBuilder = $this->createMock(ResponseBuilder::class);
 
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Parameter $handle expected to be a cURL resource, NULL given');
+        if (PHP_MAJOR_VERSION > 7) {
+            $this->expectExceptionMessage('Parameter $handle expected to be a cURL resource, null given');
+        } else {
+            $this->expectExceptionMessage('Parameter $handle expected to be a cURL resource, NULL given');
+        }
 
         new PromiseCore($request, null, $responseBuilder);
     }
@@ -152,7 +160,7 @@ class PromiseCoreTest extends TestCase
         self::assertEquals('Bar', $core->getException()->getMessage());
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         if (is_resource($this->handle)) {
             curl_close($this->handle);

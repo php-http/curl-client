@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Http\Client\Curl\Tests\Functional;
 
+
 use Http\Client\Curl\Client;
+use Psr\Http\Client\ClientInterface;
 use Http\Client\HttpClient;
 use Psr\Http\Message\StreamInterface;
 use Laminas\Diactoros\ResponseFactory;
@@ -21,7 +23,7 @@ class HttpClientDiactorosTest extends HttpClientTestCase
         return new Stream($filename);
     }
 
-    protected function createHttpAdapter(): HttpClient
+    protected function createHttpAdapter(): ClientInterface
     {
         return new Client(new ResponseFactory(), new StreamFactory());
     }
