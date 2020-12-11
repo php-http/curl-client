@@ -88,7 +88,7 @@ class PromiseCore
                         gettype($handle)
                     )
                 );
-            } else if (get_resource_type($handle) !== 'curl') {
+            } elseif (get_resource_type($handle) !== 'curl') {
                 throw new \InvalidArgumentException(
                     sprintf(
                         'Parameter $handle expected to be a cURL resource, %s resource given',
