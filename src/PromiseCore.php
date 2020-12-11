@@ -80,13 +80,22 @@ class PromiseCore
         $handle,
         ResponseBuilder $responseBuilder
     ) {
-        if (PHP_MAJOR_VERSION === 7 && !is_resource($handle)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Parameter $handle expected to be a cURL resource, %s given',
-                    gettype($handle)
-                )
-            );
+        if (PHP_MAJOR_VERSION === 7) {
+            if (!is_resource($handle)) {
+                throw new \InvalidArgumentException(
+                    sprintf(
+                        'Parameter $handle expected to be a cURL resource, %s given',
+                        gettype($handle)
+                    )
+                );
+            } else if (get_resource_type($handle) !== 'curl') {
+                throw new \InvalidArgumentException(
+                    sprintf(
+                        'Parameter $handle expected to be a cURL resource, %s resource given',
+                        get_resource_type($handle)
+                    )
+                );
+            }
         }
 
         if (PHP_MAJOR_VERSION > 7 && !$handle instanceof \CurlHandle) {
@@ -94,15 +103,6 @@ class PromiseCore
                 sprintf(
                     'Parameter $handle expected to be a cURL resource, %s given',
                     get_debug_type($handle)
-                )
-            );
-        }
-
-        if (is_resource($handle) && get_resource_type($handle) !== 'curl') {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Parameter $handle expected to be a cURL resource, %s resource given',
-                    get_resource_type($handle) ?? get_debug_type($handle)
                 )
             );
         }
