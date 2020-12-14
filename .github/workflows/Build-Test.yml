@@ -1,3 +1,4 @@
+name: Tests
 
 # Run this workflow every time a new commit pushed to your repository
 on:
@@ -17,7 +18,6 @@ jobs:
           - operating-system: ubuntu-16.04
             php-versions: '7.1'
             COMPOSER_FLAGS: '--prefer-stable --prefer-lowest'
-            COVERAGE: 'true'
             PHPUNIT_FLAGS: '--coverage-clover build/coverage.xml'
 
     name: PHP ${{ matrix.php-versions }} - ${{ matrix.operating-system }}
@@ -82,9 +82,3 @@ jobs:
 
       - name: Apply tests
         run: composer test
-
-      - name: Apply coverage
-        if: ${{ matrix.COVERAGE == 'true' }}
-        run: |
-          wget https://scrutinizer-ci.com/ocular.phar
-          php ocular.phar code-coverage:upload --format=php-clover build/coverage.xml
