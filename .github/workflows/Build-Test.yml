@@ -71,14 +71,11 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
-      - name: Composer self update
-        run: composer self-update
-
       - name: Install Composer dependencies
-        run: composer update ${{ matrix.COMPOSER_FLAGS }} --prefer-source --no-interaction
+        run: composer update ${{ matrix.COMPOSER_FLAGS }} --no-interaction
 
       - name: boot test server
         run: vendor/bin/http_test_server > /dev/null 2>&1 &
 
-      - name: Apply tests
+      - name: Run tests
         run: composer test
