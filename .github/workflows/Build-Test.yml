@@ -50,13 +50,13 @@ jobs:
           restore-keys: ${{ steps.extcache.outputs.key }}
 
       - name: Cache Composer Dependencies
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: ~/.composer/cache/files
           key: dependencies-composer-${{ hashFiles('composer.json') }}
 
       - name: Setup PHP Action
-        uses: shivammathur/setup-php@2.8.0
+        uses: shivammathur/setup-php@3
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: ${{ env.extensions }}
@@ -68,7 +68,7 @@ jobs:
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
 
       - name: Cache dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
