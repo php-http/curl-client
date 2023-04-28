@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.3.0 - 2023-04-28
+
+### Added
+
+- Test with PHP 8.2
+
+### Fixed
+
+- This client needs a PSR-17 factories implementation. Instead of requiring an implementation,
+  previous versions only required the interfaces which could lead to a non-functional installation.
+  Fixed by requiring `psr/http-factory-implementation`.
+
 ## 2.2.1 - 2021-12-10
 
 ### Added
@@ -33,12 +45,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Minimal PHP version changed to 7.1.
-- `Client::__construct` now expects PSR-17 factories instead of HTTPlug ones. 
+- `Client::__construct` now expects PSR-17 factories instead of HTTPlug ones.
 
 ### Added
 
 - #41: Support [PSR-17](https://www.php-fig.org/psr/psr-17/) and
-  [PSR-18](https://www.php-fig.org/psr/psr-18/). 
+  [PSR-18](https://www.php-fig.org/psr/psr-18/).
 
 
 ## 1.7.1 - 2018-03-26
@@ -58,7 +70,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- #29: Request not using CURLOPT_POSTFIELDS have content-length set to 
+- #29: Request not using CURLOPT_POSTFIELDS have content-length set to
 
 ### Changed
 
@@ -94,7 +106,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Request body can be send with any method except GET, HEAD and TRACE.
-- #25: Make discovery a hard dependency. 
+- #25: Make discovery a hard dependency.
 
 
 ## 1.4.2 - 2016-06-14
@@ -126,7 +138,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-- #13: Remove HeaderParser. 
+- #13: Remove HeaderParser.
 
 
 ## 1.2 - 2016-03-09
@@ -163,7 +175,7 @@ First stable release.
 ### Changed
 
 - Root namespace changed from `Http\Curl` to `Http\Client\Curl`.
-- Main client class name renamed from `CurlHttpClient` to `Client`. 
+- Main client class name renamed from `CurlHttpClient` to `Client`.
 - Minimum required [php-http/discovery](https://packagist.org/packages/php-http/discovery)
   version changed to 0.5.
 
