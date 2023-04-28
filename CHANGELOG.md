@@ -57,7 +57,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- #36: Failure evaluating code: is_resource($handle) (string assertions are deprecated in PHP 7.2)
+- #36: Failure evaluating code: `is_resource($handle)` (string assertions are deprecated in PHP 7.2)
 
 
 ## 1.7 - 2017-02-09
