@@ -28,7 +28,8 @@
         "guzzlehttp/psr7": "^1.0",
         "php-http/client-integration-tests": "^3.0",
         "phpunit/phpunit": "^7.5 || ^9.4",
-        "laminas/laminas-diactoros": "^2.0"
+        "laminas/laminas-diactoros": "^2.0",
+        "php-http/message-factory": "^1.1"
     },
     "autoload": {
         "psr-4": {
@@ -48,5 +49,10 @@
     "scripts": {
         "test": "vendor/bin/phpunit",
         "test-ci": "vendor/bin/phpunit --coverage-clover build/coverage.xml"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": false
+        }
     }
 }
