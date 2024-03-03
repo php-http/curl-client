@@ -14,9 +14,6 @@
 
         <testsuite name="All">
             <directory>tests</directory>
-            <!-- Exclude till https://github.com/php-http/message/issues/105 resolved. -->
-            <exclude>tests/Functional/HttpAsyncClientGuzzleTest.php</exclude>
-            <exclude>tests/Functional/HttpClientGuzzleTest.php</exclude>
         </testsuite>
 
         <testsuite name="Unit">
@@ -25,9 +22,6 @@
 
         <testsuite name="Functional">
             <directory>tests/Functional</directory>
-            <!-- Exclude till https://github.com/php-http/message/issues/105 resolved. -->
-            <exclude>tests/Functional/HttpAsyncClientGuzzleTest.php</exclude>
-            <exclude>tests/Functional/HttpClientGuzzleTest.php</exclude>
         </testsuite>
 
     </testsuites>
