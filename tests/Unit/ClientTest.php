@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Http\Client\Curl\Tests\Unit;
 
+use GuzzleHttp\Psr7\Utils;
 use Http\Client\Curl\Client;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -83,14 +84,13 @@ class ClientTest extends TestCase
         }
 
         $length = strlen($content);
-        $body = \GuzzleHttp\Psr7\stream_for($content);
+        $body = Utils::streamFor($content);
         $body->seek(40);
         $request = new Request('http://foo.com', 'POST', $body);
         $options = $bodyOptions->invoke($client, $request, []);
 
-        static::assertTrue(
-            false !== strstr($options[CURLOPT_READFUNCTION](null, null, $length), 'abcdef'),
-            'Steam was not rewinded'
+        static::assertNotFalse(
+            strpos($options[CURLOPT_READFUNCTION](null, null, $length), 'abcdef'), 'Steam was not rewinded'
         );
     }
 
@@ -101,7 +101,7 @@ class ClientTest extends TestCase
         $bodyOptions = new \ReflectionMethod(Client::class, 'addRequestBodyOptions');
         $bodyOptions->setAccessible(true);
 
-        $body = \GuzzleHttp\Psr7\stream_for('abcdef');
+        $body = Utils::streamFor('abcdef');
         $body->seek(3);
         $request = new Request('http://foo.com', 'POST', $body);
         $options = $bodyOptions->invoke($client, $request, []);

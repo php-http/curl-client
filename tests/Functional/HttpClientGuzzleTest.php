@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Http\Client\Curl\Tests\Functional;
 
+use GuzzleHttp\Psr7\HttpFactory;
 use GuzzleHttp\Psr7\Stream;
 use Http\Client\Curl\Client;
-use Http\Client\HttpClient;
-use Http\Message\MessageFactory\GuzzleMessageFactory;
-use Http\Message\StreamFactory\GuzzleStreamFactory;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\StreamInterface;
 
 /**
@@ -19,9 +18,9 @@ class HttpClientGuzzleTest extends HttpClientTestCase
     /**
      * {@inheritdoc}
      */
-    protected function createHttpAdapter(): HttpClient
+    protected function createHttpAdapter(): ClientInterface
     {
-        return new Client(new GuzzleMessageFactory(), new GuzzleStreamFactory());
+        return new Client(new HttpFactory(), new HttpFactory());
     }
 
     /**
