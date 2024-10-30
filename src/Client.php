@@ -77,8 +77,8 @@ class Client implements HttpClient, HttpAsyncClient
      * @since 2.0 Accepts PSR-17 factories instead of HTTPlug ones.
      */
     public function __construct(
-        ResponseFactoryInterface $responseFactory = null,
-        StreamFactoryInterface $streamFactory = null,
+        ?ResponseFactoryInterface $responseFactory = null,
+        ?StreamFactoryInterface $streamFactory = null,
         array $options = []
     ) {
         $this->responseFactory = $responseFactory ?: Psr17FactoryDiscovery::findResponseFactory();
