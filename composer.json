@@ -28,7 +28,7 @@
         "guzzlehttp/psr7": "^2.0",
         "php-http/client-integration-tests": "^3.0",
         "phpunit/phpunit": "^7.5 || ^9.4",
-        "laminas/laminas-diactoros": "^2.0",
+        "laminas/laminas-diactoros": "^2.0 || ^3.0",
         "php-http/message-factory": "^1.1"
     },
     "autoload": {
