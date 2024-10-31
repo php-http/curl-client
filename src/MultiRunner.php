@@ -81,7 +81,7 @@ class MultiRunner
      *
      * @param PromiseCore|null $targetCore
      */
-    public function wait(PromiseCore $targetCore = null): void
+    public function wait(?PromiseCore $targetCore = null): void
     {
         do {
             $status = curl_multi_exec($this->multiHandle, $active);

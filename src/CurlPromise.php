@@ -51,15 +51,15 @@ class CurlPromise implements Promise
      * If you do not care about one of the cases, you can set the corresponding callable to null
      * The callback will be called when the response or exception arrived and never more than once.
      *
-     * @param callable $onFulfilled Called when a response will be available
-     * @param callable $onRejected  Called when an error happens.
+     * @param callable|null $onFulfilled Called when a response will be available
+     * @param callable|null $onRejected  Called when an error happens.
      *
      * You must always return the Response in the interface or throw an Exception
      *
      * @return Promise Always returns a new promise which is resolved with value of the executed
      *                 callback (onFulfilled / onRejected)
      */
-    public function then(callable $onFulfilled = null, callable $onRejected = null)
+    public function then(?callable $onFulfilled = null, ?callable $onRejected = null)
     {
         if ($onFulfilled) {
             $this->core->addOnFulfilled($onFulfilled);
