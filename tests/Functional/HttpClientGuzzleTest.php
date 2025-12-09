@@ -15,17 +15,11 @@ use Psr\Http\Message\StreamInterface;
  */
 class HttpClientGuzzleTest extends HttpClientTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function createHttpAdapter(): ClientInterface
     {
         return new Client(new HttpFactory(), new HttpFactory());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createFileStream(string $filename): StreamInterface
     {
         return new Stream(fopen($filename, 'r'));

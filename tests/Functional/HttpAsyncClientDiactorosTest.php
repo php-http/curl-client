@@ -14,9 +14,6 @@ use Laminas\Diactoros\StreamFactory;
  */
 class HttpAsyncClientDiactorosTest extends HttpAsyncClientTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function createHttpAsyncClient(): HttpAsyncClient
     {
         return new Client(new ResponseFactory(), new StreamFactory());

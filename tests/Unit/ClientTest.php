@@ -42,7 +42,9 @@ class ClientTest extends TestCase
         $client = $this->createMock(Client::class);
 
         $createHeaders = new \ReflectionMethod(Client::class, 'createHeaders');
-        $createHeaders->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $createHeaders->setAccessible(true);
+        }
 
         $request = new Request();
 
@@ -61,7 +63,6 @@ class ClientTest extends TestCase
         $client = $this->createMock(Client::class);
 
         $createHeaders = new \ReflectionMethod(Client::class, 'createHeaders');
-        $createHeaders->setAccessible(true);
 
         $request = new Request();
         $request = $request->withHeader('content-length', '0');
@@ -76,7 +77,6 @@ class ClientTest extends TestCase
         $client = $this->createMock(Client::class);
 
         $bodyOptions = new \ReflectionMethod(Client::class, 'addRequestBodyOptions');
-        $bodyOptions->setAccessible(true);
 
         $content = 'abcdef';
         while (strlen($content) < 1024 * 1024 + 100) {
@@ -99,7 +99,6 @@ class ClientTest extends TestCase
         $client = $this->createMock(Client::class);
 
         $bodyOptions = new \ReflectionMethod(Client::class, 'addRequestBodyOptions');
-        $bodyOptions->setAccessible(true);
 
         $body = Utils::streamFor('abcdef');
         $body->seek(3);
