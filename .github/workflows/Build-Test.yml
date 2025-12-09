@@ -15,9 +15,9 @@ jobs:
       fail-fast: false
       matrix:
         operating-system: [ubuntu-latest]
-        php-versions: ['7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5']
+        php-versions: ['8.1', '8.2', '8.3', '8.4', '8.5']
         include:
-          - php-versions: '7.4'
+          - php-versions: '8.1'
             COMPOSER_FLAGS: '--prefer-stable --prefer-lowest'
             PHPUNIT_FLAGS: '--coverage-clover build/coverage.xml'
 

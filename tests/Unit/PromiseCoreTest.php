@@ -6,10 +6,8 @@ namespace Http\Client\Curl\Tests\Unit;
 
 use Http\Client\Curl\PromiseCore;
 use Http\Client\Curl\ResponseBuilder;
-use Http\Client\Exception;
 use Http\Client\Exception\RequestException;
 use Http\Promise\Promise;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;

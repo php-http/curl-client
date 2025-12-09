@@ -13,9 +13,6 @@ use Http\Client\HttpAsyncClient;
  */
 class HttpAsyncClientGuzzleTest extends HttpAsyncClientTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function createHttpAsyncClient(): HttpAsyncClient
     {
         return new Client(new HttpFactory(), new HttpFactory());

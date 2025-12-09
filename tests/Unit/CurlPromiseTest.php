@@ -21,8 +21,7 @@ class CurlPromiseTest extends TestCase
     {
         $core = $this->createMock(PromiseCore::class);
         $runner = $this->getMockBuilder(MultiRunner::class)->disableOriginalConstructor()
-            ->setMethods(['wait'])->getMock();
-        /** @var MultiRunner|\PHPUnit_Framework_MockObject_MockObject $runner */
+            ->onlyMethods(['wait'])->getMock();
         $promise = new CurlPromise($core, $runner);
 
         $runner->expects(self::once())->method('wait')->with($core);
@@ -37,7 +36,6 @@ class CurlPromiseTest extends TestCase
     {
         $core = $this->createMock(PromiseCore::class);
         $runner = $this->getMockBuilder(MultiRunner::class)->disableOriginalConstructor()->getMock();
-        /** @var MultiRunner|\PHPUnit_Framework_MockObject_MockObject $runner */
         $promise = new CurlPromise($core, $runner);
 
         $runner->expects(self::once())->method('wait')->with($core);
@@ -55,8 +53,7 @@ class CurlPromiseTest extends TestCase
     {
         $core = $this->createMock(PromiseCore::class);
         $runner = $this->getMockBuilder(MultiRunner::class)->disableOriginalConstructor()
-            ->setMethods(['wait'])->getMock();
-        /** @var MultiRunner|\PHPUnit_Framework_MockObject_MockObject $runner */
+            ->onlyMethods(['wait'])->getMock();
         $promise = new CurlPromise($core, $runner);
 
         $onFulfill = function () {

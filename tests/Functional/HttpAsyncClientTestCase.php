@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Http\Client\Curl\Tests\Functional;
 
 use Http\Client\Tests\HttpAsyncClientTest;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Base class for asynchronous functional client tests.
@@ -12,11 +13,10 @@ use Http\Client\Tests\HttpAsyncClientTest;
 abstract class HttpAsyncClientTestCase extends HttpAsyncClientTest
 {
     /**
-     * {@inheritdoc}
-     *
      * @dataProvider requestProvider
      */
-    public function testAsyncSendRequest($httpMethod, $uri, array $httpHeaders, $requestBody): void
+    #[DataProvider('requestProvider')]
+    public function testAsyncSendRequest(string $httpMethod, string $uri, array $httpHeaders, ?string $requestBody): void
     {
         if ($requestBody !== null && in_array($httpMethod, ['GET', 'HEAD', 'TRACE'], true)) {
             self::markTestSkipped('cURL can not send body using '.$httpMethod);
@@ -30,15 +30,14 @@ abstract class HttpAsyncClientTestCase extends HttpAsyncClientTest
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @dataProvider requestWithOutcomeProvider
      */
+    #[DataProvider('requestWithOutcomeProvider')]
     public function testSendAsyncRequestWithOutcome(
-        $uriAndOutcome,
-        $httpVersion,
+        array $uriAndOutcome,
+        string $httpVersion,
         array $httpHeaders,
-        $requestBody
+        ?string $requestBody
     ): void {
         if ( $requestBody !== null) {
             self::markTestSkipped('cURL can not send body using GET');

@@ -6,6 +6,7 @@ namespace Http\Client\Curl\Tests\Functional;
 
 use Http\Client\Tests\HttpClientTest;
 use Http\Client\Tests\PHPUnitUtility;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Http\Message\StreamInterface;
 
 /**
@@ -18,7 +19,7 @@ abstract class HttpClientTestCase extends HttpClientTest
      *
      * @var string[]
      */
-    protected $tmpFiles = [];
+    protected array $tmpFiles = [];
 
     public function testSendLargeFile(): void
     {
@@ -31,12 +32,9 @@ abstract class HttpClientTestCase extends HttpClientTest
         fclose($fd);
         $body = $this->createFileStream($filename);
 
-        $request = self::$messageFactory->createRequest(
-            'POST',
-            PHPUnitUtility::getUri(),
-            ['content-length' => 1024 * 2048],
-            $body
-        );
+        $request = self::$requestFactory->createRequest('POST', PHPUnitUtility::getUri());
+        $request = $request->withHeader('content-length', 1024 * 2048);
+        $request = $request->withBody($body);
 
         $response = $this->httpAdapter->sendRequest($request);
         $this->assertResponse(
@@ -52,11 +50,10 @@ abstract class HttpClientTestCase extends HttpClientTest
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @dataProvider requestProvider
      */
-    public function testSendRequest($httpMethod, $uri, array $httpHeaders, $requestBody): void
+    #[DataProvider('requestProvider')]
+    public function testSendRequest(string $httpMethod, string $uri, array $httpHeaders, ?string $requestBody): void
     {
         if ($requestBody !== null && in_array($httpMethod, ['GET', 'HEAD', 'TRACE'], true)) {
             self::markTestSkipped('cURL can not send body using '.$httpMethod);
@@ -70,15 +67,14 @@ abstract class HttpClientTestCase extends HttpClientTest
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @dataProvider requestWithOutcomeProvider
      */
+    #[DataProvider('requestWithOutcomeProvider')]
     public function testSendRequestWithOutcome(
-        $uriAndOutcome,
-        $httpVersion,
+        array $uriAndOutcome,
+        string $httpVersion,
         array $httpHeaders,
-        $requestBody
+        ?string $requestBody
     ): void {
         if ($requestBody !== null) {
             self::markTestSkipped('cURL can not send body using GET');
@@ -95,8 +91,6 @@ abstract class HttpClientTestCase extends HttpClientTest
 
     /**
      * Create temporary file.
-     *
-     * @return string Filename
      */
     protected function createTempFile(): string
     {

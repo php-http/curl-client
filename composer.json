@@ -12,10 +12,8 @@
         "name": "Михаил Красильников",
         "email": "m.krasilnikov@yandex.ru"
     }],
-    "prefer-stable": true,
-    "minimum-stability": "dev",
     "require": {
-        "php": "^7.4 || ^8.0",
+        "php": "^8.1",
         "ext-curl": "*",
         "php-http/discovery": "^1.6",
         "php-http/httplug": "^2.0",
@@ -26,8 +24,8 @@
     },
     "require-dev": {
         "guzzlehttp/psr7": "^2.0",
-        "php-http/client-integration-tests": "^3.0",
-        "phpunit/phpunit": "^7.5 || ^9.4",
+        "php-http/client-integration-tests": "^4.0",
+        "phpunit/phpunit": "^9.6.17 || ^10.0 || ^11.0 || ^12.0",
         "laminas/laminas-diactoros": "^2.0 || ^3.0",
         "php-http/message-factory": "^1.1"
     },
