@@ -40,12 +40,7 @@ class ClientTest extends TestCase
     public function testExpectHeaderIsEmpty(): void
     {
         $client = $this->createMock(Client::class);
-
         $createHeaders = new \ReflectionMethod(Client::class, 'createHeaders');
-        if (PHP_VERSION_ID < 80100) {
-            $createHeaders->setAccessible(true);
-        }
-
         $request = new Request();
 
         $headers = $createHeaders->invoke($client, $request, []);
